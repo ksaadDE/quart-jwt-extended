@@ -23,7 +23,7 @@ def add_claims_to_access_token(identity):
 
 
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -37,7 +37,7 @@ def login():
 # get_jwt_claims() method
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     claims = get_jwt_claims()
     return jsonify({
         'hello_is': claims['hello'],

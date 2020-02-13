@@ -12,7 +12,7 @@ jwt = JWTManager(app)
 
 
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if not username:
@@ -29,7 +29,7 @@ def login():
 
 @app.route('/partially-protected', methods=['GET'])
 @jwt_optional
-def partially_protected():
+async def partially_protected():
     # If no JWT is sent in with the request, get_jwt_identity()
     # will return None
     current_user = get_jwt_identity()

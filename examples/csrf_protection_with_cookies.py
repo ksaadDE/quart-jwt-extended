@@ -44,7 +44,7 @@ jwt = JWTManager(app)
 # set_refresh_cookies() will now also set the non-httponly CSRF cookies
 # as well
 @app.route('/token/auth', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -64,7 +64,7 @@ def login():
 
 @app.route('/token/refresh', methods=['POST'])
 @jwt_refresh_token_required
-def refresh():
+async def refresh():
     # Create the new access token
     current_user = get_jwt_identity()
     access_token = create_access_token(identity=current_user)
@@ -82,7 +82,7 @@ def refresh():
 # in order to logout. unset_jwt_cookies is a helper function to
 # do just that.
 @app.route('/token/remove', methods=['POST'])
-def logout():
+async def logout():
     resp = jsonify({'logout': True})
     unset_jwt_cookies(resp)
     return resp, 200
@@ -90,7 +90,7 @@ def logout():
 
 @app.route('/api/example', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     username = get_jwt_identity()
     return jsonify({'hello': 'from {}'.format(username)}), 200
 

@@ -57,7 +57,7 @@ def custom_user_loader_error(identity):
 
 # Create a token for any user, so this can be tested out
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.get_json().get('username', None)
     access_token = create_access_token(identity=username)
     ret = {'access_token': access_token}
@@ -70,7 +70,7 @@ def login():
 # or with the ```get_current_user()``` method
 @app.route('/admin-only', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     if 'admin' not in current_user.roles:
         return jsonify({"msg": "Forbidden"}), 403
     else:

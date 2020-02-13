@@ -38,7 +38,7 @@ def user_identity_lookup(user):
 
 
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -59,7 +59,7 @@ def login():
 
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     ret = {
         'current_identity': get_jwt_identity(),  # test
         'current_roles': get_jwt_claims()['roles']  # ['foo', 'bar']

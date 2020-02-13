@@ -52,8 +52,8 @@ def urljoin(*args):
 def token_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        verify_jwt_in_request()
-        return fn(*args, **kwargs)
+        await verify_jwt_in_request()
+        return await fn(*args, **kwargs)
     return wrapper
 
 
@@ -62,13 +62,13 @@ def group_required(group=''):
         @wraps(fn)
         def wrapper(*args, **kwargs):
             # standard quart_jwt_extended token verifications
-            verify_jwt_in_request()
+            await verify_jwt_in_request()
 
             # custom group membership verification
             groups = get_raw_jwt()[OIDC_GROUPS_CLAIM]
             if group not in groups:
                 return jsonify({'result': "user not in group required to access this endpoint"}), 401
-            return fn(*args, **kwargs)
+            return await fn(*args, **kwargs)
         return wrapper
     return decorator
 
@@ -86,7 +86,7 @@ oidc_jwks_uri = requests.get(oidc_config['jwks_uri'], verify=False).json()
 # retrieve first jwk entry from jwks_uri endpoint and use it to construct the RSA public key
 app.config['JWT_PUBLIC_KEY'] = RSAAlgorithm.from_jwk(json.dumps(oidc_jwks_uri['keys'][0]))
 
-# audience is oidc client id (can be array starting https://github.com/vimalloc/quart-jwt-extended/issues/219)
+# audience is oidc client id (can be array starting https://github.com/greenape/quart-jwt-extended/issues/219)
 app.config['JWT_DECODE_AUDIENCE'] = OIDC_CLIENT_ID
 
 # name of token entry that will become distinct quart identity username
@@ -96,19 +96,19 @@ jwt = JWTManager(app)
 
 # TEST ENDPOINTS
 @app.route('/anonymous', methods=['GET'])
-def get_anonymous():
+async def get_anonymous():
     return jsonify({'result': "anonymous ok"}), 200
 
 
 @app.route('/token-protected', methods=['GET'])
 @token_required
-def get_protected_by_token():
+async def get_protected_by_token():
     return jsonify({'result': "protected by token ok"}), 200
 
 
 @app.route('/group-protected', methods=['GET'])
 @group_required('api-access')  # currently one, could be one of or multiple required depending on your needs
-def get_protected_by_group():
+async def get_protected_by_group():
     return jsonify({'result': "protected by token AND group membership ok"},
                    {'user': current_user.username}
                    ), 200

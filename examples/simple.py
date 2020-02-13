@@ -15,7 +15,7 @@ jwt = JWTManager(app)
 # function is used to actually generate the token, and you can return
 # it to the caller however you choose.
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
@@ -38,7 +38,7 @@ def login():
 # in the request to access.
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200

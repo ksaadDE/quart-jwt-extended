@@ -23,8 +23,8 @@ jwt = JWTManager(app)
 # great option. In this example, we will be using an in memory
 # store, just to show you how this might work. For more
 # complete examples, check out these:
-# https://github.com/vimalloc/quart-jwt-extended/blob/master/examples/redis_blacklist.py
-# https://github.com/vimalloc/quart-jwt-extended/tree/master/examples/database_blacklist
+# https://github.com/greenape/quart-jwt-extended/blob/master/examples/redis_blacklist.py
+# https://github.com/greenape/quart-jwt-extended/tree/master/examples/database_blacklist
 blacklist = set()
 
 
@@ -46,7 +46,7 @@ def check_if_token_in_blacklist(decrypted_token):
 
 # Standard login endpoint
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -63,7 +63,7 @@ def login():
 # will not be able to access this endpoint
 @app.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required
-def refresh():
+async def refresh():
     current_user = get_jwt_identity()
     ret = {
         'access_token': create_access_token(identity=current_user)
@@ -74,7 +74,7 @@ def refresh():
 # Endpoint for revoking the current users access token
 @app.route('/logout', methods=['DELETE'])
 @jwt_required
-def logout():
+async def logout():
     jti = get_raw_jwt()['jti']
     blacklist.add(jti)
     return jsonify({"msg": "Successfully logged out"}), 200
@@ -83,7 +83,7 @@ def logout():
 # Endpoint for revoking the current users refresh token
 @app.route('/logout2', methods=['DELETE'])
 @jwt_refresh_token_required
-def logout2():
+async def logout2():
     jti = get_raw_jwt()['jti']
     blacklist.add(jti)
     return jsonify({"msg": "Successfully logged out"}), 200
@@ -93,7 +93,7 @@ def logout2():
 # accessing this endpoint
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     return jsonify({'hello': 'world'})
 
 if __name__ == '__main__':

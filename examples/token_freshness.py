@@ -14,7 +14,7 @@ jwt = JWTManager(app)
 # Standard login endpoint. Will return a fresh access token and
 # a refresh token
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -36,7 +36,7 @@ def login():
 # as we do not actually verify a password in this endpoint.
 @app.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required
-def refresh():
+async def refresh():
     current_user = get_jwt_identity()
     new_token = create_access_token(identity=current_user, fresh=False)
     ret = {'access_token': new_token}
@@ -49,7 +49,7 @@ def refresh():
 # this will only return a new access token, so that we don't keep
 # generating new refresh tokens, which entirely defeats their point.
 @app.route('/fresh-login', methods=['POST'])
-def fresh_login():
+async def fresh_login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -63,7 +63,7 @@ def fresh_login():
 # Any valid JWT can access this endpoint
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     username = get_jwt_identity()
     return jsonify(logged_in_as=username), 200
 
@@ -71,7 +71,7 @@ def protected():
 # Only fresh JWTs can access this endpoint
 @app.route('/protected-fresh', methods=['GET'])
 @fresh_jwt_required
-def protected_fresh():
+async def protected_fresh():
     username = get_jwt_identity()
     return jsonify(fresh_logged_in_as=username), 200
 

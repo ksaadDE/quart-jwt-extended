@@ -21,7 +21,7 @@ jwt = JWTManager(app)
 
 
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -37,7 +37,7 @@ def login():
 # /protected?jwt=<ACCESS_TOKEN>
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     return jsonify(foo='bar')
 
 if __name__ == '__main__':

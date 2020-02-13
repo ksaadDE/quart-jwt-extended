@@ -12,7 +12,7 @@ jwt = JWTManager(app)
 
 
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -34,7 +34,7 @@ def login():
 # to make a new access token for this identity.
 @app.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required
-def refresh():
+async def refresh():
     current_user = get_jwt_identity()
     ret = {
         'access_token': create_access_token(identity=current_user)
@@ -44,7 +44,7 @@ def refresh():
 
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     username = get_jwt_identity()
     return jsonify(logged_in_as=username), 200
 

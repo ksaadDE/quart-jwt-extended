@@ -18,13 +18,13 @@ jwt = JWTManager(app)
 # `admin` in the access token
 def admin_required(fn):
     @wraps(fn)
-    def wrapper(*args, **kwargs):
-        verify_jwt_in_request()
+    async def wrapper(*args, **kwargs):
+        await verify_jwt_in_request()
         claims = get_jwt_claims()
         if claims['roles'] != 'admin':
             return jsonify(msg='Admins only!'), 403
         else:
-            return fn(*args, **kwargs)
+            return await fn(*args, **kwargs)
     return wrapper
 
 
@@ -37,7 +37,7 @@ def add_claims_to_access_token(identity):
 
 
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     access_token = create_access_token(username)
     return jsonify(access_token=access_token)
@@ -45,7 +45,7 @@ def login():
 
 @app.route('/protected', methods=['GET'])
 @admin_required
-def protected():
+async def protected():
     return jsonify(secret_message="go banana!") 
 
 if __name__ == '__main__':

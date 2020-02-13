@@ -40,5 +40,5 @@ users all of their active tokens, and letting them revoke and unrevoke those tok
 
 For more in depth examples of these, check out:
 
-- https://github.com/vimalloc/quart-jwt-extended/blob/master/examples/redis_blacklist.py
-- https://github.com/vimalloc/quart-jwt-extended/tree/master/examples/database_blacklist
+- https://github.com/greenape/quart-jwt-extended/blob/master/examples/redis_blacklist.py
+- https://github.com/greenape/quart-jwt-extended/tree/master/examples/database_blacklist

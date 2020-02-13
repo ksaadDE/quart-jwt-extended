@@ -23,7 +23,7 @@ def my_expired_token_callback(expired_token):
 
 
 @app.route('/login', methods=['POST'])
-def login():
+async def login():
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if username != 'test' or password != 'test':
@@ -35,7 +35,7 @@ def login():
 
 @app.route('/protected', methods=['GET'])
 @jwt_required
-def protected():
+async def protected():
     return jsonify({'hello': 'world'}), 200
 
 
