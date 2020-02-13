@@ -2,7 +2,7 @@ import datetime
 from warnings import warn
 from six import raise_from
 
-from collections import Sequence, Set
+from collections.abc import Sequence, Set
 
 from quart import current_app
 
