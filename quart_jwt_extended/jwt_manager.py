@@ -42,7 +42,7 @@ from quart_jwt_extended.default_callbacks import (
     default_jwt_headers_callback,
 )
 from quart_jwt_extended.tokens import encode_refresh_token, encode_access_token
-from quart_jwt_extended.utils import get_jwt_identity
+from quart_jwt_extended.utils import get_jwt_identity, await_if_possible
 
 
 class JWTManager(object):
@@ -106,73 +106,73 @@ class JWTManager(object):
         """
 
         @app.errorhandler(NoAuthorizationError)
-        def handle_auth_error(e):
-            return self._unauthorized_callback(str(e))
+        async def handle_auth_error(e):
+            return await await_if_possible(self._unauthorized_callback(str(e)))
 
         @app.errorhandler(CSRFError)
-        def handle_csrf_error(e):
-            return self._unauthorized_callback(str(e))
+        async def handle_csrf_error(e):
+            return await await_if_possible(self._unauthorized_callback(str(e)))
 
         @app.errorhandler(ExpiredSignatureError)
-        def handle_expired_error(e):
+        async def handle_expired_error(e):
             try:
                 token = ctx_stack.top.expired_jwt
-                return self._expired_token_callback(token)
+                return await await_if_possible(self._expired_token_callback(token))
             except TypeError:
                 msg = (
                     "jwt.expired_token_loader callback now takes the expired token "
                     "as an additional parameter. Example: expired_callback(token)"
                 )
                 warn(msg, DeprecationWarning)
-                return self._expired_token_callback()
+                return await await_if_possible(self._expired_token_callback())
 
         @app.errorhandler(InvalidHeaderError)
-        def handle_invalid_header_error(e):
-            return self._invalid_token_callback(str(e))
+        async def handle_invalid_header_error(e):
+            return await await_if_possible(self._invalid_token_callback(str(e)))
 
         @app.errorhandler(DecodeError)
-        def handle_invalid_header_error(e):
-            return self._invalid_token_callback(str(e))
+        async def handle_invalid_header_error(e):
+            return await await_if_possible(self._invalid_token_callback(str(e)))
 
         @app.errorhandler(InvalidTokenError)
-        def handle_invalid_token_error(e):
-            return self._invalid_token_callback(str(e))
+        async def handle_invalid_token_error(e):
+            return await await_if_possible(self._invalid_token_callback(str(e)))
 
         @app.errorhandler(JWTDecodeError)
-        def handle_jwt_decode_error(e):
-            return self._invalid_token_callback(str(e))
+        async def handle_jwt_decode_error(e):
+            return await await_if_possible(self._invalid_token_callback(str(e)))
 
         @app.errorhandler(WrongTokenError)
-        def handle_wrong_token_error(e):
-            return self._invalid_token_callback(str(e))
+        async def handle_wrong_token_error(e):
+            return await await_if_possible(self._invalid_token_callback(str(e)))
 
         @app.errorhandler(InvalidAudienceError)
-        def handle_invalid_audience_error(e):
-            return self._invalid_token_callback(str(e))
+        async def handle_invalid_audience_error(e):
+            return await await_if_possible(self._invalid_token_callback(str(e)))
 
         @app.errorhandler(InvalidIssuerError)
-        def handle_invalid_issuer_error(e):
-            return self._invalid_token_callback(str(e))
+        async def handle_invalid_issuer_error(e):
+            return await await_if_possible(self._invalid_token_callback(str(e)))
 
         @app.errorhandler(RevokedTokenError)
-        def handle_revoked_token_error(e):
-            return self._revoked_token_callback()
+        async def handle_revoked_token_error(e):
+            return await await_if_possible(self._revoked_token_callback())
 
         @app.errorhandler(FreshTokenRequired)
-        def handle_fresh_token_required(e):
-            return self._needs_fresh_token_callback()
+        async def handle_fresh_token_required(e):
+            return await await_if_possible(self._needs_fresh_token_callback())
 
         @app.errorhandler(UserLoadError)
-        def handler_user_load_error(e):
+        async def handler_user_load_error(e):
             # The identity is already saved before this exception was raised,
             # otherwise a different exception would be raised, which is why we
             # can safely call get_jwt_identity() here
             identity = get_jwt_identity()
-            return self._user_loader_error_callback(identity)
+            return await await_if_possible(self._user_loader_error_callback(identity))
 
         @app.errorhandler(UserClaimsVerificationError)
-        def handle_failed_user_claims_verification(e):
-            return self._verify_claims_failed_callback()
+        async def handle_failed_user_claims_verification(e):
+            return await await_if_possible(self._verify_claims_failed_callback())
 
     @staticmethod
     def _set_default_configuration_options(app):

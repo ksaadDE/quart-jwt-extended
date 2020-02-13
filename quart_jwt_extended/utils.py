@@ -1,3 +1,4 @@
+from asyncio import iscoroutine
 from warnings import warn
 
 from quart import current_app
@@ -21,6 +22,13 @@ import jwt
 
 # Proxy to access the current user
 current_user = LocalProxy(lambda: get_current_user())
+
+
+async def await_if_possible(func):
+    if iscoroutine(func):
+        return await func
+    else:
+        return func
 
 
 def get_raw_jwt():
