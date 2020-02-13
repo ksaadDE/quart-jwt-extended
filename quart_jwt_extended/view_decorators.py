@@ -6,6 +6,7 @@ from re import split
 from werkzeug.exceptions import BadRequest
 
 from quart import request
+
 try:
     from quart import _app_ctx_stack as ctx_stack
 except ImportError:  # pragma: no cover
@@ -13,12 +14,20 @@ except ImportError:  # pragma: no cover
 
 from quart_jwt_extended.config import config
 from quart_jwt_extended.exceptions import (
-    CSRFError, FreshTokenRequired, InvalidHeaderError, NoAuthorizationError,
-    UserLoadError
+    CSRFError,
+    FreshTokenRequired,
+    InvalidHeaderError,
+    NoAuthorizationError,
+    UserLoadError,
 )
 from quart_jwt_extended.utils import (
-    decode_token, has_user_loader, user_loader, verify_token_claims,
-    verify_token_not_blacklisted, verify_token_type, get_unverified_jwt_headers
+    decode_token,
+    has_user_loader,
+    user_loader,
+    verify_token_claims,
+    verify_token_not_blacklisted,
+    verify_token_type,
+    get_unverified_jwt_headers,
 )
 
 
@@ -29,7 +38,7 @@ async def verify_jwt_in_request():
     no token or if the token is invalid.
     """
     if request.method not in config.exempt_methods:
-        jwt_data, jwt_header = await _decode_jwt_from_request(request_type='access')
+        jwt_data, jwt_header = await _decode_jwt_from_request(request_type="access")
         ctx_stack.top.jwt = jwt_data
         ctx_stack.top.jwt_header = jwt_header
         verify_token_claims(jwt_data)
@@ -49,7 +58,7 @@ async def verify_jwt_in_request_optional():
     """
     try:
         if request.method not in config.exempt_methods:
-            jwt_data, jwt_header = await _decode_jwt_from_request(request_type='access')
+            jwt_data, jwt_header = await _decode_jwt_from_request(request_type="access")
             ctx_stack.top.jwt = jwt_data
             ctx_stack.top.jwt_header = jwt_header
             verify_token_claims(jwt_data)
@@ -65,17 +74,17 @@ async def verify_fresh_jwt_in_request():
     token is not marked as fresh.
     """
     if request.method not in config.exempt_methods:
-        jwt_data, jwt_header = await _decode_jwt_from_request(request_type='access')
+        jwt_data, jwt_header = await _decode_jwt_from_request(request_type="access")
         ctx_stack.top.jwt = jwt_data
         ctx_stack.top.jwt_header = jwt_header
-        fresh = jwt_data['fresh']
+        fresh = jwt_data["fresh"]
         if isinstance(fresh, bool):
             if not fresh:
-                raise FreshTokenRequired('Fresh token required')
+                raise FreshTokenRequired("Fresh token required")
         else:
             now = timegm(datetime.utcnow().utctimetuple())
             if fresh < now:
-                raise FreshTokenRequired('Fresh token required')
+                raise FreshTokenRequired("Fresh token required")
         verify_token_claims(jwt_data)
         _load_user(jwt_data[config.identity_claim_key])
 
@@ -86,7 +95,7 @@ async def verify_jwt_refresh_token_in_request():
     exception if there is no token or the token is invalid.
     """
     if request.method not in config.exempt_methods:
-        jwt_data, jwt_header = await _decode_jwt_from_request(request_type='refresh')
+        jwt_data, jwt_header = await _decode_jwt_from_request(request_type="refresh")
         ctx_stack.top.jwt = jwt_data
         ctx_stack.top.jwt_header = jwt_header
         _load_user(jwt_data[config.identity_claim_key])
@@ -102,10 +111,12 @@ def jwt_required(fn):
 
     See also: :func:`~quart_jwt_extended.fresh_jwt_required`
     """
+
     @wraps(fn)
     async def wrapper(*args, **kwargs):
         await verify_jwt_in_request()
         return await fn(*args, **kwargs)
+
     return wrapper
 
 
@@ -123,10 +134,12 @@ def jwt_optional(fn):
     etc), this will still call the appropriate error handler instead of allowing
     the endpoint to be called as if there is no access token in the request.
     """
+
     @wraps(fn)
     async def wrapper(*args, **kwargs):
         await verify_jwt_in_request_optional()
         return await fn(*args, **kwargs)
+
     return wrapper
 
 
@@ -140,10 +153,12 @@ def fresh_jwt_required(fn):
 
     See also: :func:`~quart_jwt_extended.jwt_required`
     """
+
     @wraps(fn)
     async def wrapper(*args, **kwargs):
         await verify_fresh_jwt_in_request()
         return await fn(*args, **kwargs)
+
     return wrapper
 
 
@@ -154,10 +169,12 @@ def jwt_refresh_token_required(fn):
     If you decorate an endpoint with this, it will ensure that the requester
     has a valid refresh token before allowing the endpoint to be called.
     """
+
     @wraps(fn)
     async def wrapper(*args, **kwargs):
         await verify_jwt_refresh_token_in_request()
         return await fn(*args, **kwargs)
+
     return wrapper
 
 
@@ -186,12 +203,11 @@ async def _decode_jwt_from_headers():
     # Check if header is comma delimited, ie
     # <HeaderName>: <field> <value>, <field> <value>, etc...
     if header_type:
-        field_values = split(r',\s*', auth_header)
+        field_values = split(r",\s*", auth_header)
         jwt_header = [s for s in field_values if s.split()[0] == header_type]
         if len(jwt_header) < 1 or len(jwt_header[0].split()) != 2:
             msg = "Bad {} header. Expected value '{} <JWT>'".format(
-                header_name,
-                header_type
+                header_name, header_type
             )
             raise InvalidHeaderError(msg)
         jwt_header = jwt_header[0]
@@ -211,7 +227,7 @@ async def _decode_jwt_from_headers():
 
 
 async def _decode_jwt_from_cookies(request_type):
-    if request_type == 'access':
+    if request_type == "access":
         cookie_key = config.access_cookie_name
         csrf_header_key = config.access_csrf_header_name
         csrf_field_key = config.access_csrf_field_name
@@ -249,10 +265,10 @@ async def _decode_jwt_from_query_string():
 
 
 async def _decode_jwt_from_json(request_type):
-    if request.content_type != 'application/json':
-        raise NoAuthorizationError('Invalid content-type. Must be application/json.')
+    if request.content_type != "application/json":
+        raise NoAuthorizationError("Invalid content-type. Must be application/json.")
 
-    if request_type == 'access':
+    if request_type == "access":
         token_key = config.json_key
     else:
         token_key = config.refresh_json_key
@@ -276,16 +292,18 @@ async def _decode_jwt_from_request(request_type):
 
     # add the functions in the order specified in JWT_TOKEN_LOCATION
     for location in locations:
-        if location == 'cookies':
+        if location == "cookies":
             get_encoded_token_functions.append(
-                lambda: _decode_jwt_from_cookies(request_type))
-        if location == 'query_string':
+                lambda: _decode_jwt_from_cookies(request_type)
+            )
+        if location == "query_string":
             get_encoded_token_functions.append(_decode_jwt_from_query_string)
-        if location == 'headers':
+        if location == "headers":
             get_encoded_token_functions.append(_decode_jwt_from_headers)
-        if location == 'json':
+        if location == "json":
             get_encoded_token_functions.append(
-                lambda: _decode_jwt_from_json(request_type))
+                lambda: _decode_jwt_from_json(request_type)
+            )
 
     # Try to find the token from one of these locations. It only needs to exist
     # in one place to be valid (not every location).
@@ -311,7 +329,7 @@ async def _decode_jwt_from_request(request_type):
             err_msg = "Missing JWT in {start_locs} or {end_locs} ({details})".format(
                 start_locs=", ".join(token_locations[:-1]),
                 end_locs=token_locations[-1],
-                details="; ".join(errors)
+                details="; ".join(errors),
             )
             raise NoAuthorizationError(err_msg)
         else:

@@ -11,7 +11,9 @@ except ImportError:  # pragma: no cover
 
 from quart_jwt_extended.config import config
 from quart_jwt_extended.exceptions import (
-    RevokedTokenError, UserClaimsVerificationError, WrongTokenError
+    RevokedTokenError,
+    UserClaimsVerificationError,
+    WrongTokenError,
 )
 from quart_jwt_extended.tokens import decode_jwt
 import jwt
@@ -27,7 +29,7 @@ def get_raw_jwt():
     all of the claims of the JWT that is accessing the endpoint. If no
     JWT is currently present, an empty dict is returned instead.
     """
-    return getattr(ctx_stack.top, 'jwt', {})
+    return getattr(ctx_stack.top, "jwt", {})
 
 
 def get_raw_jwt_header():
@@ -36,7 +38,7 @@ def get_raw_jwt_header():
     the JWT headers values. If no
     JWT is currently present, an empty dict is returned instead.
     """
-    return getattr(ctx_stack.top, 'jwt_header', {})
+    return getattr(ctx_stack.top, "jwt_header", {})
 
 
 def get_jwt_identity():
@@ -64,7 +66,7 @@ def get_current_user():
     being used. If the user loader callback is not being used, this will
     return `None`.
     """
-    return getattr(ctx_stack.top, 'jwt_user', None)
+    return getattr(ctx_stack.top, "jwt_user", None)
 
 
 def get_jti(encoded_token):
@@ -73,7 +75,7 @@ def get_jti(encoded_token):
 
     :param encoded_token: The encoded JWT to get the JTI from.
     """
-    return decode_token(encoded_token).get('jti')
+    return decode_token(encoded_token).get("jti")
 
 
 def decode_token(encoded_token, csrf_value=None, allow_expired=False):
@@ -99,7 +101,7 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
         msg = (
             "The single-argument (unverified_claims) form of decode_key_callback ",
             "is deprecated. Update your code to use the two-argument form ",
-            "(unverified_claims, unverified_headers)."
+            "(unverified_claims, unverified_headers).",
         )
         warn(msg, DeprecationWarning)
         secret = jwt_manager._decode_key_callback(unverified_claims)
@@ -115,7 +117,7 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
             audience=config.audience,
             issuer=config.issuer,
             leeway=config.leeway,
-            allow_expired=allow_expired
+            allow_expired=allow_expired,
         )
     except ExpiredSignatureError:
         expired_token = decode_jwt(
@@ -128,7 +130,7 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
             audience=config.audience,
             issuer=config.issuer,
             leeway=config.leeway,
-            allow_expired=True
+            allow_expired=True,
         )
         ctx_stack.top.expired_jwt = expired_token
         raise
@@ -136,14 +138,17 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
 
 def _get_jwt_manager():
     try:
-        return current_app.extensions['quart-jwt-extended']
+        return current_app.extensions["quart-jwt-extended"]
     except KeyError:  # pragma: no cover
-        raise RuntimeError("You must initialize a JWTManager with this quart "
-                           "application before using this method")
+        raise RuntimeError(
+            "You must initialize a JWTManager with this quart "
+            "application before using this method"
+        )
 
 
-def create_access_token(identity, fresh=False, expires_delta=None, user_claims=None,
-                        headers=None):
+def create_access_token(
+    identity, fresh=False, expires_delta=None, user_claims=None, headers=None
+):
     """
     Create a new access token.
 
@@ -169,12 +174,12 @@ def create_access_token(identity, fresh=False, expires_delta=None, user_claims=N
     :return: An encoded access token
     """
     jwt_manager = _get_jwt_manager()
-    return jwt_manager._create_access_token(identity, fresh, expires_delta, user_claims,
-                                            headers=headers)
+    return jwt_manager._create_access_token(
+        identity, fresh, expires_delta, user_claims, headers=headers
+    )
 
 
-def create_refresh_token(identity, expires_delta=None, user_claims=None,
-                         headers=None):
+def create_refresh_token(identity, expires_delta=None, user_claims=None, headers=None):
     """
     Creates a new refresh token.
 
@@ -195,8 +200,9 @@ def create_refresh_token(identity, expires_delta=None, user_claims=None,
     :return: An encoded refresh token
     """
     jwt_manager = _get_jwt_manager()
-    return jwt_manager._create_refresh_token(identity, expires_delta, user_claims,
-                                             headers=headers)
+    return jwt_manager._create_refresh_token(
+        identity, expires_delta, user_claims, headers=headers
+    )
 
 
 def has_user_loader():
@@ -220,30 +226,32 @@ def token_in_blacklist(*args, **kwargs):
 
 
 def verify_token_type(decoded_token, expected_type):
-    if decoded_token['type'] != expected_type:
-        raise WrongTokenError('Only {} tokens are allowed'.format(expected_type))
+    if decoded_token["type"] != expected_type:
+        raise WrongTokenError("Only {} tokens are allowed".format(expected_type))
 
 
 def verify_token_not_blacklisted(decoded_token, request_type):
     if not config.blacklist_enabled:
         return
     if not has_token_in_blacklist_callback():
-        raise RuntimeError("A token_in_blacklist_callback must be provided via "
-                           "the '@token_in_blacklist_loader' if "
-                           "JWT_BLACKLIST_ENABLED is True")
-    if config.blacklist_access_tokens and request_type == 'access':
+        raise RuntimeError(
+            "A token_in_blacklist_callback must be provided via "
+            "the '@token_in_blacklist_loader' if "
+            "JWT_BLACKLIST_ENABLED is True"
+        )
+    if config.blacklist_access_tokens and request_type == "access":
         if token_in_blacklist(decoded_token):
-            raise RevokedTokenError('Token has been revoked')
-    if config.blacklist_refresh_tokens and request_type == 'refresh':
+            raise RevokedTokenError("Token has been revoked")
+    if config.blacklist_refresh_tokens and request_type == "refresh":
         if token_in_blacklist(decoded_token):
-            raise RevokedTokenError('Token has been revoked')
+            raise RevokedTokenError("Token has been revoked")
 
 
 def verify_token_claims(jwt_data):
     jwt_manager = _get_jwt_manager()
     user_claims = jwt_data[config.user_claims_key]
     if not jwt_manager._claims_verification_callback(user_claims):
-        raise UserClaimsVerificationError('User claims verification failed')
+        raise UserClaimsVerificationError("User claims verification failed")
 
 
 def get_csrf_token(encoded_token):
@@ -254,7 +262,7 @@ def get_csrf_token(encoded_token):
     :return: The CSRF double submit token
     """
     token = decode_token(encoded_token)
-    return token['csrf']
+    return token["csrf"]
 
 
 def set_access_cookies(response, encoded_access_token, max_age=None):
@@ -273,29 +281,35 @@ def set_access_cookies(response, encoded_access_token, max_age=None):
                     the number of seconds (as an integer).
     """
     if not config.jwt_in_cookies:
-        raise RuntimeWarning("set_access_cookies() called without "
-                             "'JWT_TOKEN_LOCATION' configured to use cookies")
+        raise RuntimeWarning(
+            "set_access_cookies() called without "
+            "'JWT_TOKEN_LOCATION' configured to use cookies"
+        )
 
     # Set the access JWT in the cookie
-    response.set_cookie(config.access_cookie_name,
-                        value=encoded_access_token,
-                        max_age=max_age or config.cookie_max_age,
-                        secure=config.cookie_secure,
-                        httponly=True,
-                        domain=config.cookie_domain,
-                        path=config.access_cookie_path,
-                        samesite=config.cookie_samesite)
+    response.set_cookie(
+        config.access_cookie_name,
+        value=encoded_access_token,
+        max_age=max_age or config.cookie_max_age,
+        secure=config.cookie_secure,
+        httponly=True,
+        domain=config.cookie_domain,
+        path=config.access_cookie_path,
+        samesite=config.cookie_samesite,
+    )
 
     # If enabled, set the csrf double submit access cookie
     if config.csrf_protect and config.csrf_in_cookies:
-        response.set_cookie(config.access_csrf_cookie_name,
-                            value=get_csrf_token(encoded_access_token),
-                            max_age=max_age or config.cookie_max_age,
-                            secure=config.cookie_secure,
-                            httponly=False,
-                            domain=config.cookie_domain,
-                            path=config.access_csrf_cookie_path,
-                            samesite=config.cookie_samesite)
+        response.set_cookie(
+            config.access_csrf_cookie_name,
+            value=get_csrf_token(encoded_access_token),
+            max_age=max_age or config.cookie_max_age,
+            secure=config.cookie_secure,
+            httponly=False,
+            domain=config.cookie_domain,
+            path=config.access_csrf_cookie_path,
+            samesite=config.cookie_samesite,
+        )
 
 
 def set_refresh_cookies(response, encoded_refresh_token, max_age=None):
@@ -314,29 +328,35 @@ def set_refresh_cookies(response, encoded_refresh_token, max_age=None):
                     the number of seconds (as an integer).
     """
     if not config.jwt_in_cookies:
-        raise RuntimeWarning("set_refresh_cookies() called without "
-                             "'JWT_TOKEN_LOCATION' configured to use cookies")
+        raise RuntimeWarning(
+            "set_refresh_cookies() called without "
+            "'JWT_TOKEN_LOCATION' configured to use cookies"
+        )
 
     # Set the refresh JWT in the cookie
-    response.set_cookie(config.refresh_cookie_name,
-                        value=encoded_refresh_token,
-                        max_age=max_age or config.cookie_max_age,
-                        secure=config.cookie_secure,
-                        httponly=True,
-                        domain=config.cookie_domain,
-                        path=config.refresh_cookie_path,
-                        samesite=config.cookie_samesite)
+    response.set_cookie(
+        config.refresh_cookie_name,
+        value=encoded_refresh_token,
+        max_age=max_age or config.cookie_max_age,
+        secure=config.cookie_secure,
+        httponly=True,
+        domain=config.cookie_domain,
+        path=config.refresh_cookie_path,
+        samesite=config.cookie_samesite,
+    )
 
     # If enabled, set the csrf double submit refresh cookie
     if config.csrf_protect and config.csrf_in_cookies:
-        response.set_cookie(config.refresh_csrf_cookie_name,
-                            value=get_csrf_token(encoded_refresh_token),
-                            max_age=max_age or config.cookie_max_age,
-                            secure=config.cookie_secure,
-                            httponly=False,
-                            domain=config.cookie_domain,
-                            path=config.refresh_csrf_cookie_path,
-                            samesite=config.cookie_samesite)
+        response.set_cookie(
+            config.refresh_csrf_cookie_name,
+            value=get_csrf_token(encoded_refresh_token),
+            max_age=max_age or config.cookie_max_age,
+            secure=config.cookie_secure,
+            httponly=False,
+            domain=config.cookie_domain,
+            path=config.refresh_csrf_cookie_path,
+            samesite=config.cookie_samesite,
+        )
 
 
 def unset_jwt_cookies(response):
@@ -360,27 +380,33 @@ def unset_access_cookies(response):
     :param response: the quart response object to delete the jwt cookies in.
     """
     if not config.jwt_in_cookies:
-        raise RuntimeWarning("unset_refresh_cookies() called without "
-                             "'JWT_TOKEN_LOCATION' configured to use cookies")
+        raise RuntimeWarning(
+            "unset_refresh_cookies() called without "
+            "'JWT_TOKEN_LOCATION' configured to use cookies"
+        )
 
-    response.set_cookie(config.access_cookie_name,
-                        value='',
-                        expires=0,
-                        secure=config.cookie_secure,
-                        httponly=True,
-                        domain=config.cookie_domain,
-                        path=config.access_cookie_path,
-                        samesite=config.cookie_samesite)
+    response.set_cookie(
+        config.access_cookie_name,
+        value="",
+        expires=0,
+        secure=config.cookie_secure,
+        httponly=True,
+        domain=config.cookie_domain,
+        path=config.access_cookie_path,
+        samesite=config.cookie_samesite,
+    )
 
     if config.csrf_protect and config.csrf_in_cookies:
-        response.set_cookie(config.access_csrf_cookie_name,
-                            value='',
-                            expires=0,
-                            secure=config.cookie_secure,
-                            httponly=False,
-                            domain=config.cookie_domain,
-                            path=config.access_csrf_cookie_path,
-                            samesite=config.cookie_samesite)
+        response.set_cookie(
+            config.access_csrf_cookie_name,
+            value="",
+            expires=0,
+            secure=config.cookie_secure,
+            httponly=False,
+            domain=config.cookie_domain,
+            path=config.access_csrf_cookie_path,
+            samesite=config.cookie_samesite,
+        )
 
 
 def unset_refresh_cookies(response):
@@ -393,27 +419,33 @@ def unset_refresh_cookies(response):
     :param response: the quart response object to delete the jwt cookies in.
     """
     if not config.jwt_in_cookies:
-        raise RuntimeWarning("unset_refresh_cookies() called without "
-                             "'JWT_TOKEN_LOCATION' configured to use cookies")
+        raise RuntimeWarning(
+            "unset_refresh_cookies() called without "
+            "'JWT_TOKEN_LOCATION' configured to use cookies"
+        )
 
-    response.set_cookie(config.refresh_cookie_name,
-                        value='',
-                        expires=0,
-                        secure=config.cookie_secure,
-                        httponly=True,
-                        domain=config.cookie_domain,
-                        path=config.refresh_cookie_path,
-                        samesite=config.cookie_samesite)
+    response.set_cookie(
+        config.refresh_cookie_name,
+        value="",
+        expires=0,
+        secure=config.cookie_secure,
+        httponly=True,
+        domain=config.cookie_domain,
+        path=config.refresh_cookie_path,
+        samesite=config.cookie_samesite,
+    )
 
     if config.csrf_protect and config.csrf_in_cookies:
-        response.set_cookie(config.refresh_csrf_cookie_name,
-                            value='',
-                            expires=0,
-                            secure=config.cookie_secure,
-                            httponly=False,
-                            domain=config.cookie_domain,
-                            path=config.refresh_csrf_cookie_path,
-                            samesite=config.cookie_samesite)
+        response.set_cookie(
+            config.refresh_csrf_cookie_name,
+            value="",
+            expires=0,
+            secure=config.cookie_secure,
+            httponly=False,
+            domain=config.cookie_domain,
+            path=config.refresh_csrf_cookie_path,
+            samesite=config.cookie_samesite,
+        )
 
 
 def get_unverified_jwt_headers(encoded_token):

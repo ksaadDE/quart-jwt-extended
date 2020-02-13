@@ -2,59 +2,63 @@ import pytest
 from quart import Quart, jsonify
 
 from quart_jwt_extended import (
-    JWTManager, jwt_required, create_access_token, get_jwt_identity,
-    fresh_jwt_required, jwt_optional
+    JWTManager,
+    jwt_required,
+    create_access_token,
+    get_jwt_identity,
+    fresh_jwt_required,
+    jwt_optional,
 )
 from tests.utils import get_jwt_manager, make_headers
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def app():
     app = Quart(__name__)
-    app.config['JWT_SECRET_KEY'] = 'foobarbaz'
+    app.config["JWT_SECRET_KEY"] = "foobarbaz"
     jwt = JWTManager(app)
 
     @jwt.user_claims_loader
     def add_user_claims(identity):
-        return {'foo': 'bar'}
+        return {"foo": "bar"}
 
-    @app.route('/protected1', methods=['GET'])
+    @app.route("/protected1", methods=["GET"])
     @jwt_required
     async def protected1():
-        return jsonify(foo='bar')
+        return jsonify(foo="bar")
 
-    @app.route('/protected2', methods=['GET'])
+    @app.route("/protected2", methods=["GET"])
     @fresh_jwt_required
     async def protected2():
-        return jsonify(foo='bar')
+        return jsonify(foo="bar")
 
-    @app.route('/protected3', methods=['GET'])
+    @app.route("/protected3", methods=["GET"])
     @jwt_optional
     async def protected3():
-        return jsonify(foo='bar')
+        return jsonify(foo="bar")
 
     return app
 
 
-@pytest.mark.parametrize("url", ['/protected1', '/protected2', '/protected3'])
+@pytest.mark.parametrize("url", ["/protected1", "/protected2", "/protected3"])
 @pytest.mark.asyncio
 async def test_successful_claims_validation(app, url):
     jwt = get_jwt_manager(app)
 
     @jwt.claims_verification_loader
     def user_load_callback(user_claims):
-        return user_claims == {'foo': 'bar'}
+        return user_claims == {"foo": "bar"}
 
     test_client = app.test_client()
     async with app.test_request_context("/protected"):
-        access_token = create_access_token('username', fresh=True)
+        access_token = create_access_token("username", fresh=True)
 
     response = await test_client.get(url, headers=make_headers(access_token))
-    assert await response.get_json() == {'foo': 'bar'}
+    assert await response.get_json() == {"foo": "bar"}
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize("url", ['/protected1', '/protected2', '/protected3'])
+@pytest.mark.parametrize("url", ["/protected1", "/protected2", "/protected3"])
 @pytest.mark.asyncio
 async def test_unsuccessful_claims_validation(app, url):
     jwt = get_jwt_manager(app)
@@ -65,14 +69,14 @@ async def test_unsuccessful_claims_validation(app, url):
 
     test_client = app.test_client()
     async with app.test_request_context("/protected"):
-        access_token = create_access_token('username', fresh=True)
+        access_token = create_access_token("username", fresh=True)
 
     response = await test_client.get(url, headers=make_headers(access_token))
-    assert await response.get_json() == {'msg': 'User claims verification failed'}
+    assert await response.get_json() == {"msg": "User claims verification failed"}
     assert response.status_code == 400
 
 
-@pytest.mark.parametrize("url", ['/protected1', '/protected2', '/protected3'])
+@pytest.mark.parametrize("url", ["/protected1", "/protected2", "/protected3"])
 @pytest.mark.asyncio
 async def test_claims_validation_custom_error(app, url):
     jwt = get_jwt_manager(app)
@@ -85,18 +89,18 @@ async def test_claims_validation_custom_error(app, url):
     def custom_error():
         # Make sure that we can get the jwt identity in here if we need it.
         user = get_jwt_identity()
-        return jsonify(msg='claims failed for {}'.format(user)), 404
+        return jsonify(msg="claims failed for {}".format(user)), 404
 
     test_client = app.test_client()
     async with app.test_request_context("/protected"):
-        access_token = create_access_token('username', fresh=True)
+        access_token = create_access_token("username", fresh=True)
 
     response = await test_client.get(url, headers=make_headers(access_token))
-    assert await response.get_json() == {'msg': 'claims failed for username'}
+    assert await response.get_json() == {"msg": "claims failed for username"}
     assert response.status_code == 404
 
 
-@pytest.mark.parametrize("url", ['/protected1', '/protected2', '/protected3'])
+@pytest.mark.parametrize("url", ["/protected1", "/protected2", "/protected3"])
 @pytest.mark.asyncio
 async def test_get_jwt_identity_in_verification_method(app, url):
     jwt = get_jwt_manager(app)
@@ -105,12 +109,12 @@ async def test_get_jwt_identity_in_verification_method(app, url):
     def user_load_callback(user_claims):
         # Make sure that we can get the jwt identity in here if we need it.
         user = get_jwt_identity()
-        return user == 'username'
+        return user == "username"
 
     test_client = app.test_client()
     async with app.test_request_context("/protected"):
-        access_token = create_access_token('username', fresh=True)
+        access_token = create_access_token("username", fresh=True)
 
     response = await test_client.get(url, headers=make_headers(access_token))
-    assert await response.get_json() == {'foo': 'bar'}
+    assert await response.get_json() == {"foo": "bar"}
     assert response.status_code == 200

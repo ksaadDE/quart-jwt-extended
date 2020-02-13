@@ -30,18 +30,18 @@ mViqmWFxRMZW6jhmV04uY3ySwabOFamw51PRuRiKkcKfmxZnF3bVAgMBAAE=
 """
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def app():
     app = Quart(__name__)
-    app.config['JWT_SECRET_KEY'] = 'foobarbaz'
-    app.config['JWT_PUBLIC_KEY'] = RSA_PUBLIC
-    app.config['JWT_PRIVATE_KEY'] = RSA_PRIVATE
+    app.config["JWT_SECRET_KEY"] = "foobarbaz"
+    app.config["JWT_PUBLIC_KEY"] = RSA_PUBLIC
+    app.config["JWT_PRIVATE_KEY"] = RSA_PRIVATE
     JWTManager(app)
 
-    @app.route('/protected', methods=['GET'])
+    @app.route("/protected", methods=["GET"])
     @jwt_required
     async def protected():
-        return jsonify(foo='bar')
+        return jsonify(foo="bar")
 
     return app
 
@@ -51,18 +51,20 @@ async def test_asymmetric_cropto(app):
     test_client = app.test_client()
 
     async with app.test_request_context("/protected"):
-        hs256_token = create_access_token('username')
-        app.config['JWT_ALGORITHM'] = 'RS256'
-        rs256_token = create_access_token('username')
+        hs256_token = create_access_token("username")
+        app.config["JWT_ALGORITHM"] = "RS256"
+        rs256_token = create_access_token("username")
 
     # Insure the symmetric token does not work now
-    access_headers = {'Authorization': 'Bearer {}'.format(hs256_token)}
-    response = await test_client.get('/protected', headers=access_headers)
+    access_headers = {"Authorization": "Bearer {}".format(hs256_token)}
+    response = await test_client.get("/protected", headers=access_headers)
     assert response.status_code == 422
-    assert await response.get_json() == {'msg': 'The specified alg value is not allowed'}
+    assert await response.get_json() == {
+        "msg": "The specified alg value is not allowed"
+    }
 
     # Insure the asymmetric token does work
-    access_headers = {'Authorization': 'Bearer {}'.format(rs256_token)}
-    response = await test_client.get('/protected', headers=access_headers)
+    access_headers = {"Authorization": "Bearer {}".format(rs256_token)}
+    response = await test_client.get("/protected", headers=access_headers)
     assert response.status_code == 200
-    assert await response.get_json() == {'foo': 'bar'}
+    assert await response.get_json() == {"foo": "bar"}
