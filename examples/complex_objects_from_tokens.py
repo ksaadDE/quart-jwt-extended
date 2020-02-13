@@ -52,7 +52,7 @@ def custom_user_loader_error(identity):
 # Create a token for any user, so this can be tested out
 @app.route("/login", methods=["POST"])
 async def login():
-    username = request.get_json().get("username", None)
+    username = (await request.get_json()).get("username", None)
     access_token = create_access_token(identity=username)
     ret = {"access_token": access_token}
     return jsonify(ret), 200
