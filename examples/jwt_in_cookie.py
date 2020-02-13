@@ -48,8 +48,8 @@ jwt = JWTManager(app)
 # the cookie names and other settings via various app.config options
 @app.route("/token/auth", methods=["POST"])
 async def login():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
+    username = (await request.get_json()).get("username", None)
+    password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
         return jsonify({"login": False}), 401
 

@@ -40,7 +40,7 @@ def add_claims_to_access_token(identity):
 
 @app.route("/login", methods=["POST"])
 async def login():
-    username = request.json.get("username", None)
+    username = (await request.get_json()).get("username", None)
     access_token = create_access_token(username)
     return jsonify(access_token=access_token)
 

@@ -23,8 +23,8 @@ def add_claims_to_access_token(identity):
 
 @app.route("/login", methods=["POST"])
 async def login():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
+    username = (await request.get_json()).get("username", None)
+    password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
         return jsonify({"msg": "Bad username or password"}), 401
 

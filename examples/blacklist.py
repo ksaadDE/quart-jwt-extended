@@ -51,8 +51,8 @@ def check_if_token_in_blacklist(decrypted_token):
 # Standard login endpoint
 @app.route("/login", methods=["POST"])
 async def login():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
+    username = (await request.get_json()).get("username", None)
+    password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
         return jsonify({"msg": "Bad username or password"}), 401
 
