@@ -1,2 +1,4 @@
 include LICENSE README.md requirements.txt tox.ini
 recursive-include tests *.py
+include versioneer.py
+include quart_jwt_extended/_version.py

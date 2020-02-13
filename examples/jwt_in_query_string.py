@@ -1,7 +1,9 @@
-from flask import Flask, jsonify, request
+from quart import Quart, jsonify, request
 
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
+from quart_jwt_extended import (
+    JWTManager,
+    jwt_required,
+    create_access_token,
 )
 
 # IMPORTANT NOTE:
@@ -13,18 +15,18 @@ from flask_jwt_extended import (
 #
 # If possible, you should use headers instead!
 
-app = Flask(__name__)
-app.config['JWT_TOKEN_LOCATION'] = ['query_string']
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+app = Quart(__name__)
+app.config["JWT_TOKEN_LOCATION"] = ["query_string"]
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
 
 jwt = JWTManager(app)
 
 
-@app.route('/login', methods=['POST'])
-def login():
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
-    if username != 'test' or password != 'test':
+@app.route("/login", methods=["POST"])
+async def login():
+    username = (await request.get_json()).get("username", None)
+    password = (await request.get_json()).get("password", None)
+    if username != "test" or password != "test":
         return jsonify({"msg": "Bad username or password"}), 401
 
     access_token = create_access_token(identity=username)
@@ -35,10 +37,11 @@ def login():
 # and can be changed with the JWT_QUERY_STRING_NAME option. Making
 # a request to this endpoint would look like:
 # /protected?jwt=<ACCESS_TOKEN>
-@app.route('/protected', methods=['GET'])
+@app.route("/protected", methods=["GET"])
 @jwt_required
-def protected():
-    return jsonify(foo='bar')
+async def protected():
+    return jsonify(foo="bar")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run()

@@ -1,10 +1,10 @@
 Basic Usage
 ===========
 
-In its simplest form, there is not much to using flask_jwt_extended. You use
-:func:`~flask_jwt_extended.create_access_token` to make new access JWTs,
-the :func:`~flask_jwt_extended.jwt_required` decorator to protect endpoints,
-and :func:`~flask_jwt_extended.get_jwt_identity` function to get the identity
+In its simplest form, there is not much to using quart_jwt_extended. You use
+:func:`~quart_jwt_extended.create_access_token` to make new access JWTs,
+the :func:`~quart_jwt_extended.jwt_required` decorator to protect endpoints,
+and :func:`~quart_jwt_extended.get_jwt_identity` function to get the identity
 of a JWT in a protected endpoint.
 
 .. literalinclude:: ../examples/simple.py
