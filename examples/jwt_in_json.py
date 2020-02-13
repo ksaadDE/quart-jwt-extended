@@ -1,10 +1,10 @@
-from flask import Flask, jsonify, request
+from quart import Quart, jsonify, request
 
-from flask_jwt_extended import (
+from quart_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
 )
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 # IMPORTANT: Body is meaningless in GET requests, so using json
 # as the only lookup method means that the GET method will become

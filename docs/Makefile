@@ -91,9 +91,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/flask-jwt-extended.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/quart-jwt-extended.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/flask-jwt-extended.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/quart-jwt-extended.qhc"
 
 .PHONY: applehelp
 applehelp:
@@ -110,8 +110,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/flask-jwt-extended"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/flask-jwt-extended"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/quart-jwt-extended"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/quart-jwt-extended"
 	@echo "# devhelp"
 
 .PHONY: epub

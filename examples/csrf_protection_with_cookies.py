@@ -1,13 +1,13 @@
-from flask import Flask, jsonify, request
+from quart import Quart, jsonify, request
 
-from flask_jwt_extended import (
+from quart_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     jwt_refresh_token_required, create_refresh_token,
     get_jwt_identity, set_access_cookies,
     set_refresh_cookies, unset_jwt_cookies
 )
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 # Configure application to store JWTs in cookies
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']

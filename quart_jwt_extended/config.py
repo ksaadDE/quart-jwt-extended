@@ -2,13 +2,9 @@ import datetime
 from warnings import warn
 from six import raise_from
 
-# In Python 2.7 collections.abc is a part of the collections module.
-try:
-    from collections.abc import Sequence, Set
-except ImportError:  # pragma: no cover
-    from collections import Sequence, Set
+from collections import Sequence, Set
 
-from flask import current_app
+from quart import current_app
 
 # Older versions of pyjwt do not have the requires_cryptography set. Also,
 # older versions will not be adding new algorithms to them, so I can hard code
@@ -27,11 +23,11 @@ class _Config(object):
     """
     Helper object for accessing and verifying options in this extension. This
     is meant for internal use of the application; modifying config options
-    should be done with flasks ```app.config```.
+    should be done with quarts ```app.config```.
 
     Default values for the configuration options are set in the jwt_manager
     object. All of these values are read only. This is simply a loose wrapper
-    with some helper functionality for flasks `app.config`.
+    with some helper functionality for quarts `app.config`.
     """
 
     @property
@@ -270,7 +266,7 @@ class _Config(object):
         if not key:
             key = current_app.config.get('SECRET_KEY', None)
             if not key:
-                raise RuntimeError('JWT_SECRET_KEY or flask SECRET_KEY '
+                raise RuntimeError('JWT_SECRET_KEY or quart SECRET_KEY '
                                    'must be set when using symmetric '
                                    'algorithm "{}"'.format(self.algorithm))
         return key
@@ -295,7 +291,7 @@ class _Config(object):
 
     @property
     def cookie_max_age(self):
-        # Returns the appropiate value for max_age for flask set_cookies. If
+        # Returns the appropiate value for max_age for quart set_cookies. If
         # session cookie is true, return None, otherwise return a number of
         # seconds 1 year in the future
         return None if self.session_cookie else 31540000  # 1 year

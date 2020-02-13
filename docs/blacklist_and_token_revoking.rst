@@ -14,7 +14,7 @@ tokens to have a short expires time so any damage a compromised token could
 cause is minimal.
 
 Blacklisting works by is providing a callback function to this extension, using the
-:meth:`~flask_jwt_extended.JWTManager.token_in_blacklist_loader` decorator.
+:meth:`~quart_jwt_extended.JWTManager.token_in_blacklist_loader` decorator.
 This method will be called whenever the specified tokens (`access` and/or `refresh`)
 are used to access a protected endpoint. If the callback function says that the
 token is revoked, we will not allow the call to continue, otherwise we will
@@ -40,5 +40,5 @@ users all of their active tokens, and letting them revoke and unrevoke those tok
 
 For more in depth examples of these, check out:
 
-- https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
-- https://github.com/vimalloc/flask-jwt-extended/tree/master/examples/database_blacklist
+- https://github.com/vimalloc/quart-jwt-extended/blob/master/examples/redis_blacklist.py
+- https://github.com/vimalloc/quart-jwt-extended/tree/master/examples/database_blacklist

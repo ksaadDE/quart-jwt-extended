@@ -7,17 +7,17 @@ from jwt import (
 )
 
 try:
-    from flask import _app_ctx_stack as ctx_stack
+    from quart import _app_ctx_stack as ctx_stack
 except ImportError:  # pragma: no cover
-    from flask import _request_ctx_stack as ctx_stack
+    from quart import _request_ctx_stack as ctx_stack
 
-from flask_jwt_extended.config import config
-from flask_jwt_extended.exceptions import (
+from quart_jwt_extended.config import config
+from quart_jwt_extended.exceptions import (
     JWTDecodeError, NoAuthorizationError, InvalidHeaderError, WrongTokenError,
     RevokedTokenError, FreshTokenRequired, CSRFError, UserLoadError,
     UserClaimsVerificationError
 )
-from flask_jwt_extended.default_callbacks import (
+from quart_jwt_extended.default_callbacks import (
     default_expired_token_callback, default_user_claims_callback,
     default_user_identity_callback, default_invalid_token_callback,
     default_unauthorized_callback, default_needs_fresh_token_callback,
@@ -25,16 +25,16 @@ from flask_jwt_extended.default_callbacks import (
     default_claims_verification_callback, default_verify_claims_failed_callback,
     default_decode_key_callback, default_encode_key_callback,
     default_jwt_headers_callback)
-from flask_jwt_extended.tokens import (
+from quart_jwt_extended.tokens import (
     encode_refresh_token, encode_access_token
 )
-from flask_jwt_extended.utils import get_jwt_identity
+from quart_jwt_extended.utils import get_jwt_identity
 
 
 class JWTManager(object):
     """
     An object used to hold JWT settings and callback functions for the
-    Flask-JWT-Extended extension.
+    Quart-JWT-Extended extension.
 
     Instances of :class:`JWTManager` are *not* bound to specific apps, so
     you can create one in the main body of your code and then bind it
@@ -43,11 +43,11 @@ class JWTManager(object):
 
     def __init__(self, app=None):
         """
-        Create the JWTManager instance. You can either pass a flask application
-        in directly here to register this extension with the flask app, or
+        Create the JWTManager instance. You can either pass a quart application
+        in directly here to register this extension with the quart app, or
         call init_app after creating this object (in a factory pattern).
 
-        :param app: A flask application
+        :param app: A quart application
         """
         # Register the default error handler callback methods. These can be
         # overridden with the appropriate loader decorators
@@ -67,20 +67,20 @@ class JWTManager(object):
         self._encode_key_callback = default_encode_key_callback
         self._jwt_additional_header_callback = default_jwt_headers_callback
 
-        # Register this extension with the flask app now (if it is provided)
+        # Register this extension with the quart app now (if it is provided)
         if app is not None:
             self.init_app(app)
 
     def init_app(self, app):
         """
-        Register this extension with the flask app.
+        Register this extension with the quart app.
 
-        :param app: A flask application
+        :param app: A quart application
         """
         # Save this so we can use it later in the extension
         if not hasattr(app, 'extensions'):   # pragma: no cover
             app.extensions = {}
-        app.extensions['flask-jwt-extended'] = self
+        app.extensions['quart-jwt-extended'] = self
 
         # Set all the default configurations for this extension
         self._set_default_configuration_options(app)
@@ -240,12 +240,12 @@ class JWTManager(object):
     def user_claims_loader(self, callback):
         """
         This decorator sets the callback function for adding custom claims to an
-        access token when :func:`~flask_jwt_extended.create_access_token` is
+        access token when :func:`~quart_jwt_extended.create_access_token` is
         called. By default, no extra user claims will be added to the JWT.
 
         *HINT*: The callback function must be a function that takes only **one** argument,
         which is the object passed into
-        :func:`~flask_jwt_extended.create_access_token`, and returns the custom
+        :func:`~quart_jwt_extended.create_access_token`, and returns the custom
         claims you want included in the access tokens. This returned claims
         must be *JSON serializable*.
         """
@@ -256,15 +256,15 @@ class JWTManager(object):
         """
         This decorator sets the callback function for getting the JSON
         serializable identity out of whatever object is passed into
-        :func:`~flask_jwt_extended.create_access_token` and
-        :func:`~flask_jwt_extended.create_refresh_token`. By default, this will
+        :func:`~quart_jwt_extended.create_access_token` and
+        :func:`~quart_jwt_extended.create_refresh_token`. By default, this will
         return the unmodified object that is passed in as the `identity` kwarg
         to the above functions.
 
         *HINT*: The callback function must be a function that takes only **one** argument,
         which is the object passed into
-        :func:`~flask_jwt_extended.create_access_token` or
-        :func:`~flask_jwt_extended.create_refresh_token`, and returns the
+        :func:`~quart_jwt_extended.create_access_token` or
+        :func:`~quart_jwt_extended.create_refresh_token`, and returns the
         *JSON serializable* identity of this token.
         """
         self._user_identity_callback = callback
@@ -280,7 +280,7 @@ class JWTManager(object):
 
         *HINT*: The callback must be a function that takes **one** argument,
         which is a dictionary containing the data for the expired token, and
-        and returns a *Flask response*.
+        and returns a *Quart response*.
         """
         self._expired_token_callback = callback
         return callback
@@ -295,7 +295,7 @@ class JWTManager(object):
 
         *HINT*: The callback must be a function that takes only **one** argument, which is
         a string which contains the reason why a token is invalid, and returns
-        a *Flask response*.
+        a *Quart response*.
         """
         self._invalid_token_callback = callback
         return callback
@@ -310,7 +310,7 @@ class JWTManager(object):
 
         *HINT*: The callback must be a function that takes only **one** argument, which is
         a string which contains the reason why a JWT could not be found, and
-        returns a *Flask response*.
+        returns a *Quart response*.
         """
         self._unauthorized_callback = callback
         return callback
@@ -319,13 +319,13 @@ class JWTManager(object):
         """
         This decorator sets the callback function that will be called if a
         valid and non-fresh token attempts to access an endpoint protected with
-        the :func:`~flask_jwt_extended.fresh_jwt_required` decorator. The
+        the :func:`~quart_jwt_extended.fresh_jwt_required` decorator. The
         default implementation will return a 401 status code with the JSON:
 
         {"msg": "Fresh token required"}
 
         *HINT*: The callback must be a function that takes **no** arguments, and returns
-        a *Flask response*.
+        a *Quart response*.
         """
         self._needs_fresh_token_callback = callback
         return callback
@@ -339,7 +339,7 @@ class JWTManager(object):
         {"msg": "Token has been revoked"}
 
         *HINT*: The callback must be a function that takes **no** arguments, and returns
-        a *Flask response*.
+        a *Quart response*.
         """
         self._revoked_token_callback = callback
         return callback
@@ -352,10 +352,10 @@ class JWTManager(object):
 
         *HINT*: The callback must take **one** argument which is the identity JWT
         accessing the protected endpoint, and it must return any object (which can
-        then be accessed via the :attr:`~flask_jwt_extended.current_user` LocalProxy
+        then be accessed via the :attr:`~quart_jwt_extended.current_user` LocalProxy
         in the protected endpoint), or `None` in the case of a user not being
         able to be loaded for any reason. If this callback function returns
-        `None`, the :meth:`~flask_jwt_extended.JWTManager.user_loader_error_loader`
+        `None`, the :meth:`~quart_jwt_extended.JWTManager.user_loader_error_loader`
         will be called.
         """
         self._user_loader_callback = callback
@@ -365,14 +365,14 @@ class JWTManager(object):
         """
         This decorator sets the callback function that will be called if `None`
         is returned from the
-        :meth:`~flask_jwt_extended.JWTManager.user_loader_callback_loader`
+        :meth:`~quart_jwt_extended.JWTManager.user_loader_callback_loader`
         callback function. The default implementation will return
         a 401 status code with the JSON:
 
         {"msg": "Error loading the user <identity>"}
 
         *HINT*: The callback must be a function that takes **one** argument, which is the
-        identity of the user who failed to load, and must return a *Flask response*.
+        identity of the user who failed to load, and must return a *Quart response*.
         """
         self._user_loader_error_callback = callback
         return callback
@@ -397,7 +397,7 @@ class JWTManager(object):
         a protected endpoint is accessed, and will check if the custom claims
         in the JWT are valid. By default, this callback is not used. The
         error returned if the claims are invalid can be controlled via the
-        :meth:`~flask_jwt_extended.JWTManager.claims_verification_failed_loader`
+        :meth:`~quart_jwt_extended.JWTManager.claims_verification_failed_loader`
         decorator.
 
         *HINT*: This callback must be a function that takes **one** argument, which is the
@@ -410,14 +410,14 @@ class JWTManager(object):
     def claims_verification_failed_loader(self, callback):
         """
         This decorator sets the callback function that will be called if
-        the :meth:`~flask_jwt_extended.JWTManager.claims_verification_loader`
+        the :meth:`~quart_jwt_extended.JWTManager.claims_verification_loader`
         callback returns False, indicating that the user claims are not valid.
         The default implementation will return a 400 status code with the JSON:
 
         {"msg": "User claims verification failed"}
 
         *HINT*: This callback must be a function that takes **no** arguments, and returns
-        a *Flask response*.
+        a *Quart response*.
         """
         self._verify_claims_failed_callback = callback
         return callback
@@ -459,13 +459,13 @@ class JWTManager(object):
     def additional_headers_loader(self, callback):
         """
         This decorator sets the callback function for adding custom headers to an
-        access token when :func:`~flask_jwt_extended.create_access_token` is
+        access token when :func:`~quart_jwt_extended.create_access_token` is
         called. By default, two headers will be added the type of the token, which is JWT,
         and the signing algorithm being used, such as HMAC SHA256 or RSA.
 
         *HINT*: The callback function must be a function that takes **no** argument,
         which is the object passed into
-        :func:`~flask_jwt_extended.create_access_token`, and returns the custom
+        :func:`~quart_jwt_extended.create_access_token`, and returns the custom
         claims you want included in the access tokens. This returned claims
         must be *JSON serializable*.
         """

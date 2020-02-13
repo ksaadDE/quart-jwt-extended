@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 import sys, os, io, re
-# flask-jwt-extended documentation build configuration file, created by
+# quart-jwt-extended documentation build configuration file, created by
 # sphinx-quickstart on Thu Oct  6 13:07:36 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -21,7 +21,7 @@ import sys, os, io, re
 
 sys.path.insert(0, os.path.abspath('../../..'))
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../flask_jwt_extended/'))
+sys.path.insert(0, os.path.abspath('../quart_jwt_extended/'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '_themes'))
 
 # -- General configuration ------------------------------------------------
@@ -58,14 +58,14 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'flask-jwt-extended'
+project = u'quart-jwt-extended'
 author = u'Landon Gilbert-Bland'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-with io.open('../flask_jwt_extended/__init__.py', encoding='utf-8') as f:
+with io.open('../quart_jwt_extended/__init__.py', encoding='utf-8') as f:
     package_version = re.search(r"__version__ = '(.+)'", f.read()).group(1)
 version = package_version
 release = package_version
@@ -129,7 +129,7 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 #html_theme = 'sphinx_rtd_theme'
-html_theme = 'flask'
+html_theme = 'quart'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -143,7 +143,7 @@ html_theme_path = ["_themes", ]
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'flask-jwt-extended v0.0.2'
+# html_title = u'quart-jwt-extended v0.0.2'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -243,7 +243,7 @@ html_theme_path = ["_themes", ]
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'flask-jwt-extendeddoc'
+htmlhelp_basename = 'quart-jwt-extendeddoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -269,7 +269,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'flask-jwt-extended.tex', u'flask-jwt-extended Documentation',
+    (master_doc, 'quart-jwt-extended.tex', u'quart-jwt-extended Documentation',
      u'vimalloc rlam3', 'manual'),
 ]
 
@@ -311,7 +311,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'flask-jwt-extended', u'flask-jwt-extended Documentation',
+    (master_doc, 'quart-jwt-extended', u'quart-jwt-extended Documentation',
      [author], 1)
 ]
 
@@ -326,8 +326,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'flask-jwt-extended', u'flask-jwt-extended Documentation',
-     author, 'flask-jwt-extended', 'One line description of project.',
+    (master_doc, 'quart-jwt-extended', u'quart-jwt-extended Documentation',
+     author, 'quart-jwt-extended', 'One line description of project.',
      'Miscellaneous'),
 ]
 

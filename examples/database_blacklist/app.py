@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
+from quart import Quart, request, jsonify
 
 from extensions import jwt, db
 from exceptions import TokenNotFound
-from flask_jwt_extended import (
+from quart_jwt_extended import (
     jwt_refresh_token_required, get_jwt_identity, create_access_token,
     create_refresh_token, jwt_required
 )
@@ -16,7 +16,7 @@ from blacklist_helpers import (
 # We will use an in memory sqlite database for this example. In production,
 # I would recommend postgres.
 def create_app():
-    app = Flask(__name__)
+    app = Quart(__name__)
 
     app.secret_key = 'ChangeMe!'
     app.config['JWT_BLACKLIST_ENABLED'] = True

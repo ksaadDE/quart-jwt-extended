@@ -1,14 +1,14 @@
-from flask import Flask, request, jsonify
+from quart import Quart, request, jsonify
 
-from flask_jwt_extended import (
+from quart_jwt_extended import (
     JWTManager, jwt_required, get_jwt_identity,
     create_access_token, create_refresh_token,
     jwt_refresh_token_required, get_raw_jwt
 )
 
 
-# Setup flask
-app = Flask(__name__)
+# Setup quart
+app = Quart(__name__)
 
 # Enable blacklisting and specify what kind of tokens to check
 # against the blacklist
@@ -23,8 +23,8 @@ jwt = JWTManager(app)
 # great option. In this example, we will be using an in memory
 # store, just to show you how this might work. For more
 # complete examples, check out these:
-# https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
-# https://github.com/vimalloc/flask-jwt-extended/tree/master/examples/database_blacklist
+# https://github.com/vimalloc/quart-jwt-extended/blob/master/examples/redis_blacklist.py
+# https://github.com/vimalloc/quart-jwt-extended/tree/master/examples/database_blacklist
 blacklist = set()
 
 

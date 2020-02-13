@@ -9,7 +9,7 @@ Click==7.0
 cryptography==2.8
 docutils==0.15.2
 filelock==3.0.12
-Flask==1.1.1
+Quart==0.11.2
 idna==2.8
 imagesize==1.1.0
 importlib-metadata==0.19
@@ -39,5 +39,5 @@ toml==0.10.0
 tox==3.14.0
 urllib3==1.25.7
 virtualenv==16.7.7
-Werkzeug==0.16.0
+Werkzeug==1.0.0
 zipp==0.6.0

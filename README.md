@@ -1,11 +1,11 @@
-# Flask-JWT-Extended
-[![Build Status](https://travis-ci.org/vimalloc/flask-jwt-extended.svg?branch=master)](https://travis-ci.org/vimalloc/flask-jwt-extended)
-[![Coverage Status](https://coveralls.io/repos/github/vimalloc/flask-jwt-extended/badge.svg?branch=master)](https://coveralls.io/github/vimalloc/flask-jwt-extended?branch=master)
-[![PyPI version](https://badge.fury.io/py/Flask-JWT-Extended.svg)](https://badge.fury.io/py/Flask-JWT-Extended)
-[![Documentation Status](https://readthedocs.org/projects/flask-jwt-extended/badge/)](http://flask-jwt-extended.readthedocs.io/en/latest/)
+# Quart-JWT-Extended
+[![Build Status](https://travis-ci.org/vimalloc/quart-jwt-extended.svg?branch=master)](https://travis-ci.org/vimalloc/quart-jwt-extended)
+[![Coverage Status](https://coveralls.io/repos/github/vimalloc/quart-jwt-extended/badge.svg?branch=master)](https://coveralls.io/github/vimalloc/quart-jwt-extended?branch=master)
+[![PyPI version](https://badge.fury.io/py/Quart-JWT-Extended.svg)](https://badge.fury.io/py/Quart-JWT-Extended)
+[![Documentation Status](https://readthedocs.org/projects/quart-jwt-extended/badge/)](http://quart-jwt-extended.readthedocs.io/en/latest/)
 
 ### Features
-Flask-JWT-Extended not only adds support for using JSON Web Tokens (JWT) to Flask for protecting views,
+Quart-JWT-Extended not only adds support for using JSON Web Tokens (JWT) to Quart for protecting views,
 but also many helpful (and **optional**) features  built in to make working with JSON Web Tokens
 easier. These include:
 
@@ -18,10 +18,10 @@ easier. These include:
 * Storing tokens in cookies and CSRF protection
 
 ### Usage
-[View the documentation online](https://flask-jwt-extended.readthedocs.io/en/stable/)
+[View the documentation online](https://quart-jwt-extended.readthedocs.io/en/stable/)
 
 ### Changelog
-You can view the changelog [here](https://github.com/vimalloc/flask-jwt-extended/releases).
+You can view the changelog [here](https://github.com/vimalloc/quart-jwt-extended/releases).
 This project follows [semantic versioning](https://semver.org/).
 
 ### Chatting

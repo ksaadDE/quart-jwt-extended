@@ -3,22 +3,23 @@ import warnings
 import pytest
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
-from flask import Flask
-from flask.json import JSONEncoder
+from quart import Quart
+from quart.json import JSONEncoder
 
-from flask_jwt_extended import JWTManager
-from flask_jwt_extended.config import config
+from quart_jwt_extended import JWTManager
+from quart_jwt_extended.config import config
 
 
 @pytest.fixture(scope='function')
 def app():
-    app = Flask(__name__)
+    app = Quart(__name__)
     JWTManager(app)
     return app
 
 
-def test_default_configs(app):
-    with app.test_request_context():
+@pytest.mark.asyncio
+async def test_default_configs(app):
+    async with app.test_request_context("/protected"):
         assert config.token_location == ('headers',)
         assert config.jwt_in_query_string is False
         assert config.jwt_in_cookies is False
@@ -75,7 +76,8 @@ def test_default_configs(app):
 
 
 @pytest.mark.parametrize("delta_func", [timedelta, relativedelta])
-def test_override_configs(app, delta_func):
+@pytest.mark.asyncio
+async def test_override_configs(app, delta_func):
     app.config['JWT_TOKEN_LOCATION'] = ['cookies', 'query_string', 'json']
     app.config['JWT_HEADER_NAME'] = 'TestHeader'
     app.config['JWT_HEADER_TYPE'] = 'TestType'
@@ -123,7 +125,7 @@ def test_override_configs(app, delta_func):
 
     app.json_encoder = CustomJSONEncoder
 
-    with app.test_request_context():
+    async with app.test_request_context("/protected"):
         assert config.token_location == ['cookies', 'query_string', 'json']
         assert config.jwt_in_query_string is True
         assert config.jwt_in_cookies is True
@@ -177,26 +179,29 @@ def test_override_configs(app, delta_func):
         assert config.error_msg_key == 'message'
 
 
-def test_tokens_never_expire(app):
+@pytest.mark.asyncio
+async def test_tokens_never_expire(app):
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = False
-    with app.test_request_context():
+    async with app.test_request_context("/protected"):
         assert config.access_expires is False
         assert config.refresh_expires is False
 
 
-def test_tokens_with_int_values(app):
+@pytest.mark.asyncio
+async def test_tokens_with_int_values(app):
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 300
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 432000
 
-    with app.test_request_context():
+    async with app.test_request_context("/protected"):
         assert config.access_expires == timedelta(minutes=5)
         assert config.refresh_expires == timedelta(days=5)
 
 
 # noinspection PyStatementEffect
-def test_symmetric_secret_key(app):
-    with app.test_request_context():
+@pytest.mark.asyncio
+async def test_symmetric_secret_key(app):
+    async with app.test_request_context("/protected"):
         assert config.is_asymmetric is False
 
         with pytest.raises(RuntimeError):
@@ -205,19 +210,20 @@ def test_symmetric_secret_key(app):
             config.decode_key
 
         app.secret_key = 'foobar'
-        with app.test_request_context():
+        async with app.test_request_context("/protected"):
             assert config.encode_key == 'foobar'
             assert config.decode_key == 'foobar'
 
         app.config['JWT_SECRET_KEY'] = 'foobarbaz'
-        with app.test_request_context():
+        async with app.test_request_context("/protected"):
             assert config.encode_key == 'foobarbaz'
             assert config.decode_key == 'foobarbaz'
 
 
 # noinspection PyStatementEffect
-def test_default_with_asymmetric_secret_key(app):
-    with app.test_request_context():
+@pytest.mark.asyncio
+async def test_default_with_asymmetric_secret_key(app):
+    async with app.test_request_context("/protected"):
         app.config['JWT_ALGORITHM'] = 'RS256'
         assert config.is_asymmetric is True
 
@@ -244,14 +250,15 @@ def test_default_with_asymmetric_secret_key(app):
         app.config['JWT_PUBLIC_KEY'] = 'foo2'
         app.config['JWT_PRIVATE_KEY'] = 'bar2'
         app.config['JWT_ALGORITHM'] = 'RS256'
-        with app.test_request_context():
+        async with app.test_request_context("/protected"):
             assert config.decode_key == 'foo2'
             assert config.encode_key == 'bar2'
 
 
 # noinspection PyStatementEffect
-def test_invalid_config_options(app):
-    with app.test_request_context():
+@pytest.mark.asyncio
+async def test_invalid_config_options(app):
+    async with app.test_request_context("/protected"):
         app.config['JWT_TOKEN_LOCATION'] = []
         with pytest.raises(RuntimeError):
             config.token_location
@@ -277,7 +284,7 @@ def test_invalid_config_options(app):
             config.token_location
 
         app.config['JWT_HEADER_NAME'] = ''
-        with app.test_request_context():
+        async with app.test_request_context("/protected"):
             with pytest.raises(RuntimeError):
                 config.header_name
 
@@ -318,8 +325,9 @@ def test_invalid_config_options(app):
             config.blacklist_checks
 
 
-def test_jwt_token_locations_config(app):
-    with app.test_request_context():
+@pytest.mark.asyncio
+async def test_jwt_token_locations_config(app):
+    async with app.test_request_context("/protected"):
         allowed_locations = ('headers', 'cookies', 'query_string', 'json')
         allowed_data_structures = (tuple, list, frozenset, set)
 
@@ -344,8 +352,9 @@ def test_jwt_token_locations_config(app):
             assert config.token_location == locations
 
 
-def test_jwt_blacklist_token_checks_config(app):
-    with app.test_request_context():
+@pytest.mark.asyncio
+async def test_jwt_blacklist_token_checks_config(app):
+    async with app.test_request_context("/protected"):
         allowed_token_types = ('access', 'refresh')
         allowed_data_structures = (tuple, list, frozenset, set)
 
@@ -370,8 +379,9 @@ def test_jwt_blacklist_token_checks_config(app):
             assert config.blacklist_checks == token_types
 
 
-def test_csrf_protect_config(app):
-    with app.test_request_context():
+@pytest.mark.asyncio
+async def test_csrf_protect_config(app):
+    async with app.test_request_context("/protected"):
         app.config['JWT_TOKEN_LOCATION'] = ['headers']
         app.config['JWT_COOKIE_CSRF_PROTECT'] = True
         assert config.csrf_protect is False
@@ -385,14 +395,15 @@ def test_csrf_protect_config(app):
         assert config.csrf_protect is False
 
 
-def test_depreciated_options(app):
+@pytest.mark.asyncio
+async def test_depreciated_options(app):
     app.config['JWT_CSRF_HEADER_NAME'] = 'Auth'
 
     # Cause all warnings to always be triggered.
     warnings.simplefilter("always")
 
     # Verify our warnings are thrown
-    with app.test_request_context():
+    async with app.test_request_context("/protected"):
         with warnings.catch_warnings(record=True) as w:
             assert config.access_csrf_header_name == 'Auth'
             assert config.refresh_csrf_header_name == 'Auth'
@@ -401,9 +412,10 @@ def test_depreciated_options(app):
             assert w[1].category == DeprecationWarning
 
 
-def test_missing_algorithm_in_decode_algorithms(app):
+@pytest.mark.asyncio
+async def test_missing_algorithm_in_decode_algorithms(app):
     app.config['JWT_ALGORITHM'] = 'RS256'
     app.config['JWT_DECODE_ALGORITHMS'] = ['HS512']
 
-    with app.test_request_context():
+    async with app.test_request_context("/protected"):
         assert config.decode_algorithms == ['HS512', 'RS256']

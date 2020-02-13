@@ -1,13 +1,13 @@
 """
-Flask-JWT-Extended
+Quart-JWT-Extended
 ------------------
-Flask-Login provides jwt endpoint protection for Flask.
+Quart-Login provides jwt endpoint protection for Quart.
 """
 import io
 import re
 from setuptools import setup
 
-with io.open('flask_jwt_extended/__init__.py', encoding='utf-8') as f:
+with io.open('quart_jwt_extended/__init__.py', encoding='utf-8') as f:
     version = re.search(r"__version__ = '(.+)'", f.read()).group(1)
 
 
@@ -15,22 +15,22 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 
-setup(name='Flask-JWT-Extended',
+setup(name='Quart-JWT-Extended',
       version=version,
-      url='https://github.com/vimalloc/flask-jwt-extended',
+      url='https://github.com/greenape/quart-jwt-extended',
       license='MIT',
       author='Landon Gilbert-Bland',
       author_email='landogbland@gmail.com',
-      description='Extended JWT integration with Flask',
+      description='Extended JWT integration with Quart',
       long_description=long_description,
       long_description_content_type="text/markdown",
-      keywords=['flask', 'jwt', 'json web token'],
-      packages=['flask_jwt_extended'],
+      keywords=['quart', 'jwt', 'json web token'],
+      packages=['quart_jwt_extended'],
       zip_safe=False,
       platforms='any',
       install_requires=[
-          'Werkzeug>=0.14',  # Needed for SameSite cookie functionality
-          'Flask>=1.0',
+          'Werkzeug>=1.0.0',  # Needed for SameSite cookie functionality
+          'Quart>=0.11',
           'PyJWT>=1.6.4',
           'six',
       ],
@@ -44,10 +44,6 @@ setup(name='Flask-JWT-Extended',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',

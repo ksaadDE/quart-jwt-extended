@@ -25,16 +25,16 @@
 # example for how that might work.
 import redis
 from datetime import timedelta
-from flask import Flask, request, jsonify
-from flask_jwt_extended import (
+from quart import Quart, request, jsonify
+from quart_jwt_extended import (
     JWTManager, create_access_token, create_refresh_token, get_jti,
     jwt_refresh_token_required, get_jwt_identity, jwt_required, get_raw_jwt
 )
 
-app = Flask(__name__)
+app = Quart(__name__)
 app.secret_key = 'ChangeMe!'
 
-# Setup the flask-jwt-extended extension. See:
+# Setup the quart-jwt-extended extension. See:
 ACCESS_EXPIRES = timedelta(minutes=15)
 REFRESH_EXPIRES = timedelta(days=30)
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = ACCESS_EXPIRES

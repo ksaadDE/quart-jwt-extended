@@ -17,7 +17,7 @@ manually pruned back down.
 
 This project contains example code for you to implement a blacklist
 using a database, with some more complex features that might benefit your
-application. For ease of use, we will use flask-sqlalchemy with an in
+application. For ease of use, we will use quart-sqlalchemy with an in
 memory data store, but in production I would highly recommend using postgres.
 Please note that this code is only an example, and although I do my best to
 ensure its quality, it has not been thoroughly tested.

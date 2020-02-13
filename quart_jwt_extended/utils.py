@@ -1,19 +1,19 @@
 from warnings import warn
 
-from flask import current_app
+from quart import current_app
 from jwt import ExpiredSignatureError
 from werkzeug.local import LocalProxy
 
 try:
-    from flask import _app_ctx_stack as ctx_stack
+    from quart import _app_ctx_stack as ctx_stack
 except ImportError:  # pragma: no cover
-    from flask import _request_ctx_stack as ctx_stack
+    from quart import _request_ctx_stack as ctx_stack
 
-from flask_jwt_extended.config import config
-from flask_jwt_extended.exceptions import (
+from quart_jwt_extended.config import config
+from quart_jwt_extended.exceptions import (
     RevokedTokenError, UserClaimsVerificationError, WrongTokenError
 )
-from flask_jwt_extended.tokens import decode_jwt
+from quart_jwt_extended.tokens import decode_jwt
 import jwt
 
 
@@ -60,7 +60,7 @@ def get_current_user():
     """
     In a protected endpoint, this will return the user object for the JWT that
     is accessing this endpoint. This is only present if the
-    :meth:`~flask_jwt_extended.JWTManager.user_loader_callback_loader` is
+    :meth:`~quart_jwt_extended.JWTManager.user_loader_callback_loader` is
     being used. If the user loader callback is not being used, this will
     return `None`.
     """
@@ -136,9 +136,9 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
 
 def _get_jwt_manager():
     try:
-        return current_app.extensions['flask-jwt-extended']
+        return current_app.extensions['quart-jwt-extended']
     except KeyError:  # pragma: no cover
-        raise RuntimeError("You must initialize a JWTManager with this flask "
+        raise RuntimeError("You must initialize a JWTManager with this quart "
                            "application before using this method")
 
 
@@ -150,11 +150,11 @@ def create_access_token(identity, fresh=False, expires_delta=None, user_claims=N
     :param identity: The identity of this token, which can be any data that is
                      json serializable. It can also be a python object, in which
                      case you can use the
-                     :meth:`~flask_jwt_extended.JWTManager.user_identity_loader`
+                     :meth:`~quart_jwt_extended.JWTManager.user_identity_loader`
                      to define a callback function that will be used to pull a
                      json serializable identity out of the object.
     :param fresh: If this token should be marked as fresh, and can thus access
-                  :func:`~flask_jwt_extended.fresh_jwt_required` endpoints.
+                  :func:`~quart_jwt_extended.fresh_jwt_required` endpoints.
                   Defaults to `False`. This value can also be a
                   `datetime.timedelta` in which case it will indicate how long
                   this token will be considered fresh.
@@ -181,7 +181,7 @@ def create_refresh_token(identity, expires_delta=None, user_claims=None,
     :param identity: The identity of this token, which can be any data that is
                      json serializable. It can also be a python object, in which
                      case you can use the
-                     :meth:`~flask_jwt_extended.JWTManager.user_identity_loader`
+                     :meth:`~quart_jwt_extended.JWTManager.user_identity_loader`
                      to define a callback function that will be used to pull a
                      json serializable identity out of the object.
     :param expires_delta: A `datetime.timedelta` for how long this token should
@@ -259,12 +259,12 @@ def get_csrf_token(encoded_token):
 
 def set_access_cookies(response, encoded_access_token, max_age=None):
     """
-    Takes a flask response object, and an encoded access token, and configures
+    Takes a quart response object, and an encoded access token, and configures
     the response to set in the access token in a cookie. If `JWT_CSRF_IN_COOKIES`
     is `True` (see :ref:`Configuration Options`), this will also set the CSRF
     double submit values in a separate cookie.
 
-    :param response: The Flask response object to set the access cookies in.
+    :param response: The Quart response object to set the access cookies in.
     :param encoded_access_token: The encoded access token to set in the cookies.
     :param max_age: The max age of the cookie. If this is None, it will use the
                     `JWT_SESSION_COOKIE` option (see :ref:`Configuration Options`).
@@ -300,12 +300,12 @@ def set_access_cookies(response, encoded_access_token, max_age=None):
 
 def set_refresh_cookies(response, encoded_refresh_token, max_age=None):
     """
-    Takes a flask response object, and an encoded refresh token, and configures
+    Takes a quart response object, and an encoded refresh token, and configures
     the response to set in the refresh token in a cookie. If `JWT_CSRF_IN_COOKIES`
     is `True` (see :ref:`Configuration Options`), this will also set the CSRF
     double submit values in a separate cookie.
 
-    :param response: The Flask response object to set the refresh cookies in.
+    :param response: The Quart response object to set the refresh cookies in.
     :param encoded_refresh_token: The encoded refresh token to set in the cookies.
     :param max_age: The max age of the cookie. If this is None, it will use the
                     `JWT_SESSION_COOKIE` option (see :ref:`Configuration Options`).
@@ -341,10 +341,10 @@ def set_refresh_cookies(response, encoded_refresh_token, max_age=None):
 
 def unset_jwt_cookies(response):
     """
-    Takes a flask response object, and configures it to unset (delete) JWTs
+    Takes a quart response object, and configures it to unset (delete) JWTs
     stored in cookies.
 
-    :param response: The Flask response object to delete the JWT cookies in.
+    :param response: The Quart response object to delete the JWT cookies in.
     """
     unset_access_cookies(response)
     unset_refresh_cookies(response)
@@ -352,12 +352,12 @@ def unset_jwt_cookies(response):
 
 def unset_access_cookies(response):
     """
-    takes a flask response object, and configures it to unset (delete) the
+    takes a quart response object, and configures it to unset (delete) the
     access token from the response cookies. if `jwt_csrf_in_cookies`
     (see :ref:`configuration options`) is `true`, this will also remove the
     access csrf double submit value from the response cookies as well.
 
-    :param response: the flask response object to delete the jwt cookies in.
+    :param response: the quart response object to delete the jwt cookies in.
     """
     if not config.jwt_in_cookies:
         raise RuntimeWarning("unset_refresh_cookies() called without "
@@ -385,12 +385,12 @@ def unset_access_cookies(response):
 
 def unset_refresh_cookies(response):
     """
-    takes a flask response object, and configures it to unset (delete) the
+    takes a quart response object, and configures it to unset (delete) the
     refresh token from the response cookies. if `jwt_csrf_in_cookies`
     (see :ref:`configuration options`) is `true`, this will also remove the
     refresh csrf double submit value from the response cookies as well.
 
-    :param response: the flask response object to delete the jwt cookies in.
+    :param response: the quart response object to delete the jwt cookies in.
     """
     if not config.jwt_in_cookies:
         raise RuntimeWarning("unset_refresh_cookies() called without "

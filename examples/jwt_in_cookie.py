@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, request
+from quart import Quart, jsonify, request
 
-from flask_jwt_extended import (
+from quart_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     jwt_refresh_token_required, create_refresh_token,
     get_jwt_identity, set_access_cookies,
@@ -12,7 +12,7 @@ from flask_jwt_extended import (
 #       csrf_protection_with_cookies.py for a more complete example!
 
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 # Configure application to store JWTs in cookies. Whenever you make
 # a request to a protected endpoint, you will need to send in the

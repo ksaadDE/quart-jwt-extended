@@ -1,17 +1,17 @@
-from flask import Flask, jsonify
-from flask_restful import Api
+from quart import Quart, jsonify
+from quart_restful import Api
 import requests
 import json
 from jwt.algorithms import RSAAlgorithm
 from functools import wraps
-from flask_jwt_extended import (
+from quart_jwt_extended import (
     JWTManager, verify_jwt_in_request, get_raw_jwt, current_user
 )
 import config
 
 
-# Setup Flask Server
-app = Flask(__name__)
+# Setup Quart Server
+app = Quart(__name__)
 app.config.from_object(config.Config)
 api = Api(app)
 
@@ -61,7 +61,7 @@ def group_required(group=''):
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            # standard flask_jwt_extended token verifications
+            # standard quart_jwt_extended token verifications
             verify_jwt_in_request()
 
             # custom group membership verification
@@ -86,10 +86,10 @@ oidc_jwks_uri = requests.get(oidc_config['jwks_uri'], verify=False).json()
 # retrieve first jwk entry from jwks_uri endpoint and use it to construct the RSA public key
 app.config['JWT_PUBLIC_KEY'] = RSAAlgorithm.from_jwk(json.dumps(oidc_jwks_uri['keys'][0]))
 
-# audience is oidc client id (can be array starting https://github.com/vimalloc/flask-jwt-extended/issues/219)
+# audience is oidc client id (can be array starting https://github.com/vimalloc/quart-jwt-extended/issues/219)
 app.config['JWT_DECODE_AUDIENCE'] = OIDC_CLIENT_ID
 
-# name of token entry that will become distinct flask identity username
+# name of token entry that will become distinct quart identity username
 app.config['JWT_IDENTITY_CLAIM'] = OIDC_USERNAME_CLAIM
 jwt = JWTManager(app)
 

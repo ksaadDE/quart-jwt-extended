@@ -5,7 +5,7 @@ from calendar import timegm
 import jwt
 from werkzeug.security import safe_str_cmp
 
-from flask_jwt_extended.exceptions import JWTDecodeError, CSRFError
+from quart_jwt_extended.exceptions import JWTDecodeError, CSRFError
 
 
 def _create_csrf_token():

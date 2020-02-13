@@ -2,11 +2,11 @@ API Documentation
 =================
 In here you will find the API for everything exposed in this extension.
 
-Configuring Flask-JWT-Extended
+Configuring Quart-JWT-Extended
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. currentmodule:: flask_jwt_extended
+.. currentmodule:: quart_jwt_extended
 
-.. module:: flask_jwt_extended
+.. module:: quart_jwt_extended
 
 .. autoclass:: JWTManager
 
@@ -42,8 +42,8 @@ Verify Tokens in Request
 ~~~~~~~~~~~~~~~~~~~~~~~~
 These perform the same actions as the protected endpoint decorators, without
 actually decorating a function. These are very useful if you want to create
-your own decorators on top of flask jwt extended (such as role_required), or
-if you want to hook some of this extensions functionality into a flask
+your own decorators on top of quart jwt extended (such as role_required), or
+if you want to hook some of this extensions functionality into a quart
 before_request handler.
 
 .. autofunction:: verify_jwt_in_request
@@ -60,7 +60,7 @@ Utilities
 .. attribute:: current_user
 
   A LocalProxy for accessing the current user. Roughly equilivant to
-  :func:`~flask_jwt_extended.get_current_user`
+  :func:`~quart_jwt_extended.get_current_user`
 
 .. autofunction:: decode_token
 .. autofunction:: get_current_user

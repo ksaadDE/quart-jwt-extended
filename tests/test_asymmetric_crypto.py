@@ -1,7 +1,7 @@
 import pytest
-from flask import Flask, jsonify
+from quart import Quart, jsonify
 
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+from quart_jwt_extended import JWTManager, jwt_required, create_access_token
 
 RSA_PRIVATE = """
 -----BEGIN RSA PRIVATE KEY-----
@@ -32,7 +32,7 @@ mViqmWFxRMZW6jhmV04uY3ySwabOFamw51PRuRiKkcKfmxZnF3bVAgMBAAE=
 
 @pytest.fixture(scope='function')
 def app():
-    app = Flask(__name__)
+    app = Quart(__name__)
     app.config['JWT_SECRET_KEY'] = 'foobarbaz'
     app.config['JWT_PUBLIC_KEY'] = RSA_PUBLIC
     app.config['JWT_PRIVATE_KEY'] = RSA_PRIVATE
@@ -40,28 +40,29 @@ def app():
 
     @app.route('/protected', methods=['GET'])
     @jwt_required
-    def protected():
+    async def protected():
         return jsonify(foo='bar')
 
     return app
 
 
-def test_asymmetric_cropto(app):
+@pytest.mark.asyncio
+async def test_asymmetric_cropto(app):
     test_client = app.test_client()
 
-    with app.test_request_context():
+    async with app.test_request_context("/protected"):
         hs256_token = create_access_token('username')
         app.config['JWT_ALGORITHM'] = 'RS256'
         rs256_token = create_access_token('username')
 
     # Insure the symmetric token does not work now
     access_headers = {'Authorization': 'Bearer {}'.format(hs256_token)}
-    response = test_client.get('/protected', headers=access_headers)
+    response = await test_client.get('/protected', headers=access_headers)
     assert response.status_code == 422
-    assert response.get_json() == {'msg': 'The specified alg value is not allowed'}
+    assert await response.get_json() == {'msg': 'The specified alg value is not allowed'}
 
     # Insure the asymmetric token does work
     access_headers = {'Authorization': 'Bearer {}'.format(rs256_token)}
-    response = test_client.get('/protected', headers=access_headers)
+    response = await test_client.get('/protected', headers=access_headers)
     assert response.status_code == 200
-    assert response.get_json() == {'foo': 'bar'}
+    assert await response.get_json() == {'foo': 'bar'}

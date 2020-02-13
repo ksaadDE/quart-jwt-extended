@@ -1,9 +1,9 @@
-.. flask-jwt-extended documentation master file, created by
+.. quart-jwt-extended documentation master file, created by
    sphinx-quickstart on Fri Oct  7 10:31:53 2016.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Flask-JWT-Extended's Documentation
+Quart-JWT-Extended's Documentation
 ==================================
 
 

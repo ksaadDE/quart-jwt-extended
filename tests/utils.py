@@ -1,10 +1,10 @@
 import jwt
 
-from flask_jwt_extended.config import config
+from quart_jwt_extended.config import config
 
 
-def encode_token(app, token_data, headers=None):
-    with app.test_request_context():
+async def encode_token(app, token_data, headers=None):
+    async with app.test_request_context("/protected"):
         token = jwt.encode(
             token_data,
             config.decode_key,
@@ -16,7 +16,7 @@ def encode_token(app, token_data, headers=None):
 
 
 def get_jwt_manager(app):
-    return app.extensions['flask-jwt-extended']
+    return app.extensions['quart-jwt-extended']
 
 
 def make_headers(jwt):

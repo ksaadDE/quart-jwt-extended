@@ -3,12 +3,12 @@ These are the default methods implementations that are used in this extension.
 All of these can be updated on an app by app basis using the JWTManager
 loader decorators. For further information, check out the following links:
 
-http://flask-jwt-extended.readthedocs.io/en/latest/changing_default_behavior.html
-http://flask-jwt-extended.readthedocs.io/en/latest/tokens_from_complex_object.html
+http://quart-jwt-extended.readthedocs.io/en/latest/changing_default_behavior.html
+http://quart-jwt-extended.readthedocs.io/en/latest/tokens_from_complex_object.html
 """
-from flask import jsonify
+from quart import jsonify
 
-from flask_jwt_extended.config import config
+from quart_jwt_extended.config import config
 
 
 def default_user_claims_callback(userdata):
