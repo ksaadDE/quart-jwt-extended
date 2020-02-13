@@ -19,21 +19,21 @@ jwt = JWTManager(app)
 @app.route("/login", methods=["POST"])
 async def login():
     if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return {"msg": "Missing JSON in request"}, 400
 
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if not username:
-        return jsonify({"msg": "Missing username parameter"}), 400
+        return {"msg": "Missing username parameter"}, 400
     if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
+        return {"msg": "Missing password parameter"}, 400
 
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token), 200
+    return dict(access_token=access_token), 200
 
 
 # Protect a view with jwt_required, which requires a valid access token
@@ -43,7 +43,7 @@ async def login():
 async def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    return dict(logged_in_as=current_user), 200
 
 
 if __name__ == "__main__":

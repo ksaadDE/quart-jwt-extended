@@ -46,7 +46,7 @@ def user_loader_callback(identity):
 @jwt.user_loader_error_loader
 def custom_user_loader_error(identity):
     ret = {"msg": "User {} not found".format(identity)}
-    return jsonify(ret), 404
+    return ret, 404
 
 
 # Create a token for any user, so this can be tested out
@@ -55,7 +55,7 @@ async def login():
     username = (await request.get_json()).get("username", None)
     access_token = create_access_token(identity=username)
     ret = {"access_token": access_token}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # If the user_loader_callback returns None, this method will
@@ -66,9 +66,9 @@ async def login():
 @jwt_required
 async def protected():
     if "admin" not in current_user.roles:
-        return jsonify({"msg": "Forbidden"}), 403
+        return {"msg": "Forbidden"}, 403
     else:
-        return jsonify({"msg": "don't forget to drink your ovaltine"})
+        return {"msg": "don't forget to drink your ovaltine"}
 
 
 if __name__ == "__main__":

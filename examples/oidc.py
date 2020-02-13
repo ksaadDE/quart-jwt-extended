@@ -72,9 +72,7 @@ def group_required(group=""):
             groups = get_raw_jwt()[OIDC_GROUPS_CLAIM]
             if group not in groups:
                 return (
-                    jsonify(
-                        {"result": "user not in group required to access this endpoint"}
-                    ),
+                    {"result": "user not in group required to access this endpoint"},
                     401,
                 )
             return await fn(*args, **kwargs)
@@ -112,13 +110,13 @@ jwt = JWTManager(app)
 # TEST ENDPOINTS
 @app.route("/anonymous", methods=["GET"])
 async def get_anonymous():
-    return jsonify({"result": "anonymous ok"}), 200
+    return {"result": "anonymous ok"}, 200
 
 
 @app.route("/token-protected", methods=["GET"])
 @token_required
 async def get_protected_by_token():
-    return jsonify({"result": "protected by token ok"}), 200
+    return {"result": "protected by token ok"}, 200
 
 
 @app.route("/group-protected", methods=["GET"])
@@ -127,10 +125,10 @@ async def get_protected_by_token():
 )  # currently one, could be one of or multiple required depending on your needs
 async def get_protected_by_group():
     return (
-        jsonify(
+        [
             {"result": "protected by token AND group membership ok"},
             {"user": current_user.username},
-        ),
+        ],
         200,
     )
 

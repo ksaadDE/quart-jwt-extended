@@ -6,7 +6,6 @@ loader decorators. For further information, check out the following links:
 http://quart-jwt-extended.readthedocs.io/en/latest/changing_default_behavior.html
 http://quart-jwt-extended.readthedocs.io/en/latest/tokens_from_complex_object.html
 """
-from quart import jsonify
 
 from quart_jwt_extended.config import config
 
@@ -50,7 +49,7 @@ def default_expired_token_callback(expired_token):
     By default, if an expired token attempts to access a protected endpoint,
     we return a generic error message with a 401 status
     """
-    return jsonify({config.error_msg_key: "Token has expired"}), 401
+    return {config.error_msg_key: "Token has expired"}, 401
 
 
 def default_invalid_token_callback(error_string):
@@ -60,7 +59,7 @@ def default_invalid_token_callback(error_string):
 
     :param error_string: String indicating why the token is invalid
     """
-    return jsonify({config.error_msg_key: error_string}), 422
+    return {config.error_msg_key: error_string}, 422
 
 
 def default_unauthorized_callback(error_string):
@@ -70,7 +69,7 @@ def default_unauthorized_callback(error_string):
 
     :param error_string: String indicating why this request is unauthorized
     """
-    return jsonify({config.error_msg_key: error_string}), 401
+    return {config.error_msg_key: error_string}, 401
 
 
 def default_needs_fresh_token_callback():
@@ -78,7 +77,7 @@ def default_needs_fresh_token_callback():
     By default, if a non-fresh jwt is used to access a ```fresh_jwt_required```
     endpoint, we return a general error message with a 401 status code
     """
-    return jsonify({config.error_msg_key: "Fresh token required"}), 401
+    return {config.error_msg_key: "Fresh token required"}, 401
 
 
 def default_revoked_token_callback():
@@ -86,7 +85,7 @@ def default_revoked_token_callback():
     By default, if a revoked token is used to access a protected endpoint, we
     return a general error message with a 401 status code
     """
-    return jsonify({config.error_msg_key: "Token has been revoked"}), 401
+    return {config.error_msg_key: "Token has been revoked"}, 401
 
 
 def default_user_loader_error_callback(identity):
@@ -96,7 +95,7 @@ def default_user_loader_error_callback(identity):
     status code
     """
     result = {config.error_msg_key: "Error loading the user {}".format(identity)}
-    return jsonify(result), 401
+    return result, 401
 
 
 def default_claims_verification_callback(user_claims):
@@ -111,7 +110,7 @@ def default_verify_claims_failed_callback():
     By default, if the user claims verification failed, we return a generic
     error message with a 400 status code
     """
-    return jsonify({config.error_msg_key: "User claims verification failed"}), 400
+    return {config.error_msg_key: "User claims verification failed"}, 400
 
 
 def default_decode_key_callback(claims, headers):

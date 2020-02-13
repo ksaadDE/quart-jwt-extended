@@ -19,7 +19,7 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     # Use create_access_token() and create_refresh_token() to create our
     # access and refresh tokens
@@ -27,7 +27,7 @@ async def login():
         "access_token": create_access_token(identity=username),
         "refresh_token": create_refresh_token(identity=username),
     }
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # The jwt_refresh_token_required decorator insures a valid refresh
@@ -40,14 +40,14 @@ async def login():
 async def refresh():
     current_user = get_jwt_identity()
     ret = {"access_token": create_access_token(identity=current_user)}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 @app.route("/protected", methods=["GET"])
 @jwt_required
 async def protected():
     username = get_jwt_identity()
-    return jsonify(logged_in_as=username), 200
+    return dict(logged_in_as=username), 200
 
 
 if __name__ == "__main__":

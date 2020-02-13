@@ -45,7 +45,7 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     # Create an example UserObject
     user = UserObject(username="test", roles=["foo", "bar"])
@@ -57,7 +57,7 @@ async def login():
     # user_identity_loader function.
     access_token = create_access_token(identity=user)
     ret = {"access_token": access_token}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 @app.route("/protected", methods=["GET"])
@@ -67,7 +67,7 @@ async def protected():
         "current_identity": get_jwt_identity(),  # test
         "current_roles": get_jwt_claims()["roles"],  # ['foo', 'bar']
     }
-    return jsonify(ret), 200
+    return ret, 200
 
 
 if __name__ == "__main__":

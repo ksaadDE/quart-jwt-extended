@@ -14,13 +14,11 @@ jwt = JWTManager(app)
 def my_expired_token_callback(expired_token):
     token_type = expired_token["type"]
     return (
-        jsonify(
-            {
-                "status": 401,
-                "sub_status": 42,
-                "msg": "The {} token has expired".format(token_type),
-            }
-        ),
+        {
+            "status": 401,
+            "sub_status": 42,
+            "msg": "The {} token has expired".format(token_type),
+        },
         401,
     )
 
@@ -30,16 +28,16 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     ret = {"access_token": create_access_token(username)}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 @app.route("/protected", methods=["GET"])
 @jwt_required
 async def protected():
-    return jsonify({"hello": "world"}), 200
+    return {"hello": "world"}, 200
 
 
 if __name__ == "__main__":

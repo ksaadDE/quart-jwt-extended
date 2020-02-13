@@ -27,10 +27,10 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token)
+    return dict(access_token=access_token)
 
 
 # The default query paramater where the JWT is looked for is `jwt`,
@@ -40,7 +40,7 @@ async def login():
 @app.route("/protected", methods=["GET"])
 @jwt_required
 async def protected():
-    return jsonify(foo="bar")
+    return dict(foo="bar")
 
 
 if __name__ == "__main__":

@@ -76,7 +76,7 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     # Create our JWTs
     access_token = create_access_token(identity=username)
@@ -93,7 +93,7 @@ async def login():
     revoked_store.set(refresh_jti, "false", REFRESH_EXPIRES * 1.2)
 
     ret = {"access_token": access_token, "refresh_token": refresh_token}
-    return jsonify(ret), 201
+    return ret, 201
 
 
 # A blacklisted refresh tokens will not be able to access this endpoint
@@ -106,7 +106,7 @@ async def refresh():
     access_jti = get_jti(encoded_token=access_token)
     revoked_store.set(access_jti, "false", ACCESS_EXPIRES * 1.2)
     ret = {"access_token": access_token}
-    return jsonify(ret), 201
+    return ret, 201
 
 
 # Endpoint for revoking the current users access token
@@ -115,7 +115,7 @@ async def refresh():
 async def logout():
     jti = get_raw_jwt()["jti"]
     revoked_store.set(jti, "true", ACCESS_EXPIRES * 1.2)
-    return jsonify({"msg": "Access token revoked"}), 200
+    return {"msg": "Access token revoked"}, 200
 
 
 # Endpoint for revoking the current users refresh token
@@ -124,14 +124,14 @@ async def logout():
 async def logout2():
     jti = get_raw_jwt()["jti"]
     revoked_store.set(jti, "true", REFRESH_EXPIRES * 1.2)
-    return jsonify({"msg": "Refresh token revoked"}), 200
+    return {"msg": "Refresh token revoked"}, 200
 
 
 # A blacklisted access token will not be able to access this any more
 @app.route("/protected", methods=["GET"])
 @jwt_required
 async def protected():
-    return jsonify({"hello": "world"})
+    return {"hello": "world"}
 
 
 if __name__ == "__main__":

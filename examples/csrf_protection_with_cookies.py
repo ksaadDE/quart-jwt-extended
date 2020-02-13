@@ -53,7 +53,7 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"login": False}), 401
+        return {"login": False}, 401
 
     # Create the tokens we will be sending back to the user
     access_token = create_access_token(identity=username)
@@ -61,7 +61,7 @@ async def login():
 
     # Set the JWTs and the CSRF double submit protection cookies
     # in this response
-    resp = jsonify({"login": True})
+    resp = {"login": True}
     set_access_cookies(resp, access_token)
     set_refresh_cookies(resp, refresh_token)
     return resp, 200
@@ -76,7 +76,7 @@ async def refresh():
 
     # Set the access JWT and CSRF double submit protection cookies
     # in this response
-    resp = jsonify({"refresh": True})
+    resp = {"refresh": True}
     set_access_cookies(resp, access_token)
     return resp, 200
 
@@ -88,7 +88,7 @@ async def refresh():
 # do just that.
 @app.route("/token/remove", methods=["POST"])
 async def logout():
-    resp = jsonify({"logout": True})
+    resp = {"logout": True}
     unset_jwt_cookies(resp)
     return resp, 200
 
@@ -97,7 +97,7 @@ async def logout():
 @jwt_required
 async def protected():
     username = get_jwt_identity()
-    return jsonify({"hello": "from {}".format(username)}), 200
+    return {"hello": "from {}".format(username)}, 200
 
 
 if __name__ == "__main__":

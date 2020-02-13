@@ -23,7 +23,7 @@ def admin_required(fn):
         await verify_jwt_in_request()
         claims = get_jwt_claims()
         if claims["roles"] != "admin":
-            return jsonify(msg="Admins only!"), 403
+            return dict(msg="Admins only!"), 403
         else:
             return await fn(*args, **kwargs)
 
@@ -42,13 +42,13 @@ def add_claims_to_access_token(identity):
 async def login():
     username = (await request.get_json()).get("username", None)
     access_token = create_access_token(username)
-    return jsonify(access_token=access_token)
+    return dict(access_token=access_token)
 
 
 @app.route("/protected", methods=["GET"])
 @admin_required
 async def protected():
-    return jsonify(secret_message="go banana!")
+    return dict(secret_message="go banana!")
 
 
 if __name__ == "__main__":

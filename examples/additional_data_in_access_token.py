@@ -26,10 +26,10 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     ret = {"access_token": create_access_token(username)}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # In a protected view, get the claims you added to the jwt with the
@@ -38,7 +38,7 @@ async def login():
 @jwt_required
 async def protected():
     claims = get_jwt_claims()
-    return jsonify({"hello_is": claims["hello"], "foo_is": claims["foo"]}), 200
+    return {"hello_is": claims["hello"], "foo_is": claims["foo"]}, 200
 
 
 if __name__ == "__main__":

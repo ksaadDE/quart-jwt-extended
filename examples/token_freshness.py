@@ -22,7 +22,7 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     # create_access_token supports an optional 'fresh' argument,
     # which marks the token as fresh or non-fresh accordingly.
@@ -32,7 +32,7 @@ async def login():
         "access_token": create_access_token(identity=username, fresh=True),
         "refresh_token": create_refresh_token(identity=username),
     }
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # Refresh token endpoint. This will generate a new access token from
@@ -44,7 +44,7 @@ async def refresh():
     current_user = get_jwt_identity()
     new_token = create_access_token(identity=current_user, fresh=False)
     ret = {"access_token": new_token}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # Fresh login endpoint. This is designed to be used if we need to
@@ -57,11 +57,11 @@ async def fresh_login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     new_token = create_access_token(identity=username, fresh=True)
     ret = {"access_token": new_token}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # Any valid JWT can access this endpoint
@@ -69,7 +69,7 @@ async def fresh_login():
 @jwt_required
 async def protected():
     username = get_jwt_identity()
-    return jsonify(logged_in_as=username), 200
+    return dict(logged_in_as=username), 200
 
 
 # Only fresh JWTs can access this endpoint
@@ -77,7 +77,7 @@ async def protected():
 @fresh_jwt_required
 async def protected_fresh():
     username = get_jwt_identity()
-    return jsonify(fresh_logged_in_as=username), 200
+    return dict(fresh_logged_in_as=username), 200
 
 
 if __name__ == "__main__":

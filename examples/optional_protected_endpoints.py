@@ -18,15 +18,15 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if not username:
-        return jsonify({"msg": "Missing username parameter"}), 400
+        return {"msg": "Missing username parameter"}, 400
     if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
+        return {"msg": "Missing password parameter"}, 400
 
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token), 200
+    return dict(access_token=access_token), 200
 
 
 @app.route("/partially-protected", methods=["GET"])
@@ -36,9 +36,9 @@ async def partially_protected():
     # will return None
     current_user = get_jwt_identity()
     if current_user:
-        return jsonify(logged_in_as=current_user), 200
+        return dict(logged_in_as=current_user), 200
     else:
-        return jsonify(logged_in_as="anonymous user"), 200
+        return dict(logged_in_as="anonymous user"), 200
 
 
 if __name__ == "__main__":

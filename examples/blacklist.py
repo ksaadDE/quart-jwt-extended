@@ -54,13 +54,13 @@ async def login():
     username = (await request.get_json()).get("username", None)
     password = (await request.get_json()).get("password", None)
     if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+        return {"msg": "Bad username or password"}, 401
 
     ret = {
         "access_token": create_access_token(identity=username),
         "refresh_token": create_refresh_token(identity=username),
     }
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # Standard refresh endpoint. A blacklisted refresh token
@@ -70,7 +70,7 @@ async def login():
 async def refresh():
     current_user = get_jwt_identity()
     ret = {"access_token": create_access_token(identity=current_user)}
-    return jsonify(ret), 200
+    return ret, 200
 
 
 # Endpoint for revoking the current users access token
@@ -79,7 +79,7 @@ async def refresh():
 async def logout():
     jti = get_raw_jwt()["jti"]
     blacklist.add(jti)
-    return jsonify({"msg": "Successfully logged out"}), 200
+    return {"msg": "Successfully logged out"}, 200
 
 
 # Endpoint for revoking the current users refresh token
@@ -88,7 +88,7 @@ async def logout():
 async def logout2():
     jti = get_raw_jwt()["jti"]
     blacklist.add(jti)
-    return jsonify({"msg": "Successfully logged out"}), 200
+    return {"msg": "Successfully logged out"}, 200
 
 
 # This will now prevent users with blacklisted tokens from
@@ -96,7 +96,7 @@ async def logout2():
 @app.route("/protected", methods=["GET"])
 @jwt_required
 async def protected():
-    return jsonify({"hello": "world"})
+    return {"hello": "world"}
 
 
 if __name__ == "__main__":
