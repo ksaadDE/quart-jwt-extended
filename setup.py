@@ -3,12 +3,9 @@ Quart-JWT-Extended
 ------------------
 Quart-Login provides jwt endpoint protection for Quart.
 """
-import io
-import re
-from setuptools import setup
 
-with io.open('quart_jwt_extended/__init__.py', encoding='utf-8') as f:
-    version = re.search(r"__version__ = '(.+)'", f.read()).group(1)
+from setuptools import setup
+import versioneer
 
 
 with open("README.md", "r") as f:
@@ -16,11 +13,12 @@ with open("README.md", "r") as f:
 
 
 setup(name='Quart-JWT-Extended',
-      version=version,
+      version=versioneer.get_version(),
+cmdclass=versioneer.get_cmdclass(),
       url='https://github.com/greenape/quart-jwt-extended',
       license='MIT',
-      author='Landon Gilbert-Bland',
-      author_email='landogbland@gmail.com',
+      author='Jonathan Gray',
+      author_email='jono@nanosheep.net',
       description='Extended JWT integration with Quart',
       long_description=long_description,
       long_description_content_type="text/markdown",

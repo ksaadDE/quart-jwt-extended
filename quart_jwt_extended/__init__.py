@@ -12,4 +12,6 @@ from .view_decorators import (
     verify_jwt_in_request_optional, verify_jwt_refresh_token_in_request
 )
 
-__version__ = '3.24.1'
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
