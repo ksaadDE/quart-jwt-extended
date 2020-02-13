@@ -1,4 +1,5 @@
 from asyncio import iscoroutine
+from typing import Any
 from warnings import warn
 
 from quart import current_app
@@ -24,7 +25,7 @@ import jwt
 current_user = LocalProxy(lambda: get_current_user())
 
 
-async def await_if_possible(func):
+async def await_if_possible(func) -> Any:
     if iscoroutine(func):
         return await func
     else:

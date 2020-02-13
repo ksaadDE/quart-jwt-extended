@@ -6,11 +6,12 @@ loader decorators. For further information, check out the following links:
 http://quart-jwt-extended.readthedocs.io/en/latest/changing_default_behavior.html
 http://quart-jwt-extended.readthedocs.io/en/latest/tokens_from_complex_object.html
 """
+from typing import Dict, Tuple
 
 from quart_jwt_extended.config import config
 
 
-def default_user_claims_callback(userdata):
+def default_user_claims_callback(userdata) -> dict:
     """
     By default, we add no additional claims to the access tokens.
 
@@ -21,7 +22,7 @@ def default_user_claims_callback(userdata):
     return {}
 
 
-def default_jwt_headers_callback(default_headers):
+def default_jwt_headers_callback(default_headers) -> None:
     """
     By default header typically consists of two parts: the type of the token,
     which is JWT, and the signing algorithm being used, such as HMAC SHA256
@@ -44,7 +45,7 @@ def default_user_identity_callback(userdata):
     return userdata
 
 
-def default_expired_token_callback(expired_token):
+def default_expired_token_callback(expired_token) -> Tuple[Dict[str, str], int]:
     """
     By default, if an expired token attempts to access a protected endpoint,
     we return a generic error message with a 401 status
@@ -52,7 +53,7 @@ def default_expired_token_callback(expired_token):
     return {config.error_msg_key: "Token has expired"}, 401
 
 
-def default_invalid_token_callback(error_string):
+def default_invalid_token_callback(error_string) -> Tuple[Dict[str, str], int]:
     """
     By default, if an invalid token attempts to access a protected endpoint, we
     return the error string for why it is not valid with a 422 status code
@@ -62,7 +63,7 @@ def default_invalid_token_callback(error_string):
     return {config.error_msg_key: error_string}, 422
 
 
-def default_unauthorized_callback(error_string):
+def default_unauthorized_callback(error_string) -> Tuple[Dict[str, str], int]:
     """
     By default, if a protected endpoint is accessed without a JWT, we return
     the error string indicating why this is unauthorized, with a 401 status code
@@ -72,7 +73,7 @@ def default_unauthorized_callback(error_string):
     return {config.error_msg_key: error_string}, 401
 
 
-def default_needs_fresh_token_callback():
+def default_needs_fresh_token_callback() -> Tuple[Dict[str, str], int]:
     """
     By default, if a non-fresh jwt is used to access a ```fresh_jwt_required```
     endpoint, we return a general error message with a 401 status code
@@ -80,7 +81,7 @@ def default_needs_fresh_token_callback():
     return {config.error_msg_key: "Fresh token required"}, 401
 
 
-def default_revoked_token_callback():
+def default_revoked_token_callback() -> Tuple[Dict[str, str], int]:
     """
     By default, if a revoked token is used to access a protected endpoint, we
     return a general error message with a 401 status code
@@ -88,24 +89,23 @@ def default_revoked_token_callback():
     return {config.error_msg_key: "Token has been revoked"}, 401
 
 
-def default_user_loader_error_callback(identity):
+def default_user_loader_error_callback(identity) -> Tuple[Dict[str, str], int]:
     """
     By default, if a user_loader callback is defined and the callback
     function returns None, we return a general error message with a 401
     status code
     """
-    result = {config.error_msg_key: "Error loading the user {}".format(identity)}
-    return result, 401
+    return {config.error_msg_key: f"Error loading the user {identity}"}, 401
 
 
-def default_claims_verification_callback(user_claims):
+def default_claims_verification_callback(user_claims) -> bool:
     """
     By default, we do not do any verification of the user claims.
     """
     return True
 
 
-def default_verify_claims_failed_callback():
+def default_verify_claims_failed_callback() -> Tuple[Dict[str, str], int]:
     """
     By default, if the user claims verification failed, we return a generic
     error message with a 400 status code
@@ -113,7 +113,7 @@ def default_verify_claims_failed_callback():
     return {config.error_msg_key: "User claims verification failed"}, 400
 
 
-def default_decode_key_callback(claims, headers):
+def default_decode_key_callback(claims, headers) -> str:
     """
     By default, the decode key specified via the JWT_SECRET_KEY or
     JWT_PUBLIC_KEY settings will be used to decode all tokens
@@ -121,7 +121,7 @@ def default_decode_key_callback(claims, headers):
     return config.decode_key
 
 
-def default_encode_key_callback(identity):
+def default_encode_key_callback(identity) -> str:
     """
     By default, the encode key specified via the JWT_SECRET_KEY or
     JWT_PRIVATE_KEY settings will be used to encode all tokens
