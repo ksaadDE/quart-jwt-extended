@@ -56,7 +56,7 @@ jobs:
             --cov-report term --cov-report xml --durations=10
       - store_test_results:
           path: test_results
-      - run: bash <(curl -s https://codecov.io/bash) -F flowclient_unit_tests
+      - run: bash <(curl -s https://codecov.io/bash)
 
   build_python_wheel:
     docker: *base_docker
