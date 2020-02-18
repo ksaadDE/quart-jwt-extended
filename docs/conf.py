@@ -280,7 +280,7 @@ latex_documents = [
         master_doc,
         "quart-jwt-extended.tex",
         u"quart-jwt-extended Documentation",
-        u"greenape rlam3",
+        u"greenape",
         "manual",
     ),
 ]
