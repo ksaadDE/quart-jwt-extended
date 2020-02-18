@@ -69,7 +69,8 @@ author = u"Jonathan Gray"
 
 
 from quart_jwt_extended._version import get_versions
-revision = get_versions()['version']
+
+revision = get_versions()["version"]
 del get_versions
 
 version = revision
