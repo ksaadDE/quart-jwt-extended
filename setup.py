@@ -30,7 +30,7 @@ setup(
     install_requires=[
         "Werkzeug>=1.0.0",  # Needed for SameSite cookie functionality
         "Quart>=0.11",
-        "PyJWT>=1.6.4",
+        "PyJWT>=1.6.4,<2.0",
         "six",
     ],
     python_requires=">=3.7",
