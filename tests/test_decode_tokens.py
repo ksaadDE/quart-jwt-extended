@@ -297,7 +297,7 @@ async def test_invalid_aud(app, default_access_token, token_aud):
 async def test_encode_iss(app, default_access_token):
     app.config["JWT_ENCODE_ISSUER"] = "foobar"
 
-    async with app.test_request_context():
+    async with app.test_request_context("/protected"):
         access_token = create_access_token("username")
         decoded = decode_token(access_token)
         assert decoded["iss"] == "foobar"
@@ -309,7 +309,7 @@ async def test_mismatch_iss(app, default_access_token):
     app.config["JWT_DECODE_ISSUER"] = "baz"
 
     with pytest.raises(InvalidIssuerError):
-        async with app.test_request_context():
+        async with app.test_request_context("/protected"):
             invalid_token = create_access_token("username")
             decode_token(invalid_token)
 
