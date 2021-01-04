@@ -350,11 +350,11 @@ class _Config(object):
 
     @property
     def encode_issuer(self):
-        return current_app.config['JWT_ENCODE_ISSUER']
+        return current_app.config["JWT_ENCODE_ISSUER"]
 
     @property
     def decode_issuer(self):
-        return current_app.config['JWT_DECODE_ISSUER']
+        return current_app.config["JWT_DECODE_ISSUER"]
 
     @property
     def leeway(self):

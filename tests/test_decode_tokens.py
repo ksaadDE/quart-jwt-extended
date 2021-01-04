@@ -295,21 +295,22 @@ async def test_invalid_aud(app, default_access_token, token_aud):
 
 @pytest.mark.asyncio
 async def test_encode_iss(app, default_access_token):
-    app.config['JWT_ENCODE_ISSUER'] = 'foobar'
+    app.config["JWT_ENCODE_ISSUER"] = "foobar"
 
     async with app.test_request_context():
-        access_token = create_access_token('username')
+        access_token = create_access_token("username")
         decoded = decode_token(access_token)
-        assert decoded['iss'] == 'foobar'
+        assert decoded["iss"] == "foobar"
+
 
 @pytest.mark.asyncio
 async def test_mismatch_iss(app, default_access_token):
-    app.config['JWT_ENCODE_ISSUER'] = 'foobar'
-    app.config['JWT_DECODE_ISSUER'] = 'baz'
+    app.config["JWT_ENCODE_ISSUER"] = "foobar"
+    app.config["JWT_DECODE_ISSUER"] = "baz"
 
     with pytest.raises(InvalidIssuerError):
         async with app.test_request_context():
-            invalid_token = create_access_token('username')
+            invalid_token = create_access_token("username")
             decode_token(invalid_token)
 
 
@@ -327,7 +328,7 @@ async def test_valid_decode_iss(app, default_access_token):
 @pytest.mark.asyncio
 async def test_invalid_decode_iss(app, default_access_token):
 
-    app.config['JWT_DECODE_ISSUER'] = 'baz'
+    app.config["JWT_DECODE_ISSUER"] = "baz"
 
     default_access_token["iss"] = "foobar"
     invalid_token = await encode_token(app, default_access_token)

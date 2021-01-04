@@ -244,12 +244,12 @@ class JWTManager(object):
         app.config.setdefault("JWT_BLACKLIST_ENABLED", False)
         app.config.setdefault("JWT_BLACKLIST_TOKEN_CHECKS", ("access", "refresh"))
 
-        app.config.setdefault('JWT_IDENTITY_CLAIM', 'identity')
-        app.config.setdefault('JWT_USER_CLAIMS', 'user_claims')
-        app.config.setdefault('JWT_DECODE_AUDIENCE', None)
-        app.config.setdefault('JWT_ENCODE_ISSUER', None)
-        app.config.setdefault('JWT_DECODE_ISSUER', None)
-        app.config.setdefault('JWT_DECODE_LEEWAY', 0)
+        app.config.setdefault("JWT_IDENTITY_CLAIM", "identity")
+        app.config.setdefault("JWT_USER_CLAIMS", "user_claims")
+        app.config.setdefault("JWT_DECODE_AUDIENCE", None)
+        app.config.setdefault("JWT_ENCODE_ISSUER", None)
+        app.config.setdefault("JWT_DECODE_ISSUER", None)
+        app.config.setdefault("JWT_DECODE_LEEWAY", 0)
 
         app.config.setdefault("JWT_CLAIMS_IN_REFRESH_TOKEN", False)
 

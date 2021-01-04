@@ -50,7 +50,7 @@ def encode_access_token(
     user_claims_key,
     json_encoder=None,
     headers=None,
-    issuer=None
+    issuer=None,
 ):
     """
     Creates a new encoded (utf-8) access token.
@@ -93,7 +93,7 @@ def encode_access_token(
     if csrf:
         token_data["csrf"] = _create_csrf_token()
     if issuer is not None:
-        token_data['iss'] = issuer
+        token_data["iss"] = issuer
     return _encode_jwt(
         token_data,
         expires_delta,
