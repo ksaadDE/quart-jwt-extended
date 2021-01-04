@@ -50,6 +50,7 @@ def encode_access_token(
     user_claims_key,
     json_encoder=None,
     headers=None,
+    issuer=None
 ):
     """
     Creates a new encoded (utf-8) access token.
@@ -71,6 +72,7 @@ def encode_access_token(
     :param identity_claim_key: Which key should be used to store the identity
     :param user_claims_key: Which key should be used to store the user claims
     :param headers: valid dict for specifying additional headers in JWT header section
+    :param issuer: Issuer value configured as JWT_ENCODE_ISSUER
     :return: Encoded access token
     """
 
@@ -90,6 +92,8 @@ def encode_access_token(
 
     if csrf:
         token_data["csrf"] = _create_csrf_token()
+    if issuer is not None:
+        token_data['iss'] = issuer
     return _encode_jwt(
         token_data,
         expires_delta,
