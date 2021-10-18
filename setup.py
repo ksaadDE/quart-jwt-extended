@@ -30,11 +30,11 @@ setup(
     install_requires=[
         "Werkzeug>=1.0.0",  # Needed for SameSite cookie functionality
         "Quart>=0.11",
-        "PyJWT>=1.6.4,<2.0",
+        "PyJWT>2.2.0",
         "six",
     ],
     python_requires=">=3.7",
-    extras_require={"asymmetric_crypto": ["cryptography >= 2.3"]},
+    extras_require={"asymmetric_crypto": ["cryptography >= 35.0.0"]},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",

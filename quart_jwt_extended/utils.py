@@ -99,7 +99,9 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
     """
     jwt_manager = _get_jwt_manager()
     unverified_claims = jwt.decode(
-        encoded_token, verify=False, algorithms=config.decode_algorithms
+        encoded_token,
+        options=dict(verify_signature=False),
+        algorithms=config.decode_algorithms,
     )
     unverified_headers = jwt.get_unverified_header(encoded_token)
     # Attempt to call callback with both claims and headers, but fallback to just claims
