@@ -2,8 +2,8 @@ import datetime
 import uuid
 from calendar import timegm
 
+import hmac
 import jwt
-from werkzeug.security import safe_str_cmp
 
 from quart_jwt_extended.exceptions import JWTDecodeError, CSRFError
 
@@ -214,6 +214,6 @@ def decode_jwt(
     if csrf_value:
         if "csrf" not in data:
             raise JWTDecodeError("Missing claim: csrf")
-        if not safe_str_cmp(data["csrf"], csrf_value):
+        if not hmac.compare_digest (data["csrf"], csrf_value):
             raise CSRFError("CSRF double submit tokens do not match")
     return data
